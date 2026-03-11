@@ -1,0 +1,98 @@
+ \setlength{\baselineskip}{20pt}
+\chapter{相关理论}
+\label{cha:chap3}
+在本节中，我们对现有的数据集及停车位检测的一般方法进行了归纳与讨论。图\ref{fig_dataset}中的饼图直观展示了不同研究方法的分布比例以及各数据集的使用情况。
+
+\section{公开数据集}
+（1）ps2.0数据集
+
+ps2.0数据集由同济大学的Zhang等人\cite{zhang2018vision}提出，是车位检测领域应用最为广泛的数据集之一。该数据集包含 9827 张训练图像和 2338 张测试图像，所有图像的分辨率均为 $600 \times 600$ 像素。ps2.0 通过对四路鱼眼摄像头获取的图像进行拼接，生成了鸟瞰图（BEV）表征。该数据集涵盖了极其多样的停车场环境，包括室外和室内场景，并包含三种不同的车位类型。研究人员广泛利用该数据集对各自的车位检测方法进行评估与基准测试，并取得了卓越的精度，许多研究报告的查准率已达到99\%左右。
+
+
+（2）PSV数据集
+
+PSV 数据集由Wu等人\cite{wu2018vh}提出，该数据集通过同济大学智能电动车（TiEV）平台，在同济大学嘉定校区的道路环境下采集而成。它包含 2550 张训练图像、425 张验证图像以及 1274 张测试图像，所有图像的分辨率均为 $640 \times 480$ 像素。该数据集的图像同样通过四路鱼眼摄像头采集，并经过拼接处理生成鸟瞰图。起初，该数据集主要针对图像分割方法的训练而设计。然而，随着后续加入了针对目标检测的额外标注格式，它现在也可用于训练目标检测模型。
+
+（3）SNU数据集 
+
+SNU 数据集由首尔大学的Do和Choi\cite{do2020context}发布。该数据集包含 18,299 张训练图像和 4,518 张测试图像，分辨率均为 $768 \times 256$ 像素。SNU 数据集的宗旨是提供更丰富的场景和多样化的车位类型，从而成为 ps2.0 数据集的优选替代方案。在采集过程中，鱼眼摄像头被安装在车辆侧面，且采集到的图像未进行拼接处理。这种设计允许检测算法直接处理单个摄像头的原始图像，而无需进行图像拼接。尽管SNU数据集已经作为ps2.0数据集的一种有希望的替代方案，但它在停车位检测研究工作中的应用仍然有限。
+
+\begin{figure}[!h] % use float package if you want it here
+%\setlength{\abovecaptionskip}{-0.2cm} %调整图片caption与正文之间的间距，table同理。可自己调整。
+  \centering
+  \includegraphics[width=1\linewidth]{figures/chp1/datasets.png}
+  \caption{数据集使用分布情况\cite{wong2023review} \\Fig~\ref{fig_dataset}~Dataset Distribution\cite{wong2023review}}
+  \label{fig_dataset}
+\end{figure}
+
+图\ref{fig_dataset}（a）展示了所综述作品中数据集的使用分布情况。观察可见，大多数研究（共 17 项）选择利用 ps2.0 数据集来评估其方法。此外，有 6 项研究采用了自行采集且未公开的数据集（标注为“其他”）。而于 2020 年发布的 SNU 数据集在方法评估中的使用相对有限（仅 2 项研究）。图\ref{fig_dataset}（b）描绘了关于所使用数据集数量的评估策略。多数研究（73\%）依赖单一数据集来评估其算法。然而，有 27\% 的研究在评估中采用了两个数据集，这包括将一个公开数据集与另一个自标注数据集相结合，或是同时利用两个公开数据集。采用多个数据集进行评估预示着一种更有前景的研究方向，因为它证明了该方法在不同数据集之间实现有效泛化的能力。
+
+
+\section{停车位检测一般方法}
+如图\ref{fig_pip1}所示，在停车位检测流程中，输入图像通常是由全景环视系统（AVM）生成的环视图，或是由鱼眼摄像头直接捕捉的鱼眼图像。在送入特征提取骨干网络之前，输入图像需经过预处理步骤，例如尺寸调整（Resizing）以及翻转、添加噪声等数据增强技术。
+
+特征提取模块在提取车位低级与高级特征方面起着至关重要的作用。低级特征包括角点或颜色信息，用于捕捉车位的局部细节；而高级特征则代表更抽象的特征，如车位的整体形状、尺寸及排列布局。
+
+这些提取出的特征随后被传递至检测、分类或分割模块以生成预测结果。输出预测可以采取多种形式，例如标线点坐标、描绘出的车位区域，或是代表车位边界的分割掩码。
+此后，为了优化预测输出，系统会利用预定义的几何规则或模板匹配技术进行后处理。这些规则有助于确保预测结果符合车位的预期几何特征。
+
+
+\begin{figure}[!h] % use float package if you want it here
+%\setlength{\abovecaptionskip}{-0.2cm} %调整图片caption与正文之间的间距，table同理。可自己调整。
+  \centering
+  \includegraphics[width=1\linewidth]{figures/chp1/pipline.png}
+  \caption{停车位检测的一般流程\cite{wong2023review} \\Fig~\ref{fig_pip1}~General Flow for Parking Slot Detection\cite{wong2023review}}
+  \label{fig_pip1}
+\end{figure}
+
+
+\section {模型评估指标}
+以往的论文大多数使用精确度和召回率作为停车位检测模型的评估指标。
+但查准率（Precision）和查全率（Recall）对阈值选择很敏感，这会影响它们的可靠性。为了提供更全面的评估，本文使用平均精度（AP）作为评估指标。对于此评估指标，本文应用了\textit{PASCAL VOC 2010}中的全点插值方法，如以下方程式所定义：
+
+\begin{equation}
+AP = \sum \Big((Recall_{j+1}-Recall_{j}) \times Precision_{j+1} \Big)
+\end{equation}
+
+其中 $j$ 是满足 $Recall_{j} \neq Recall_{j+1}$ 的索引。
+
+计算查准率和查全率的公式如下所示：
+
+\begin{equation}
+Precision = \frac{TP}{TP + FP}
+\end{equation}
+
+\begin{equation}
+Recall = \frac{TP}{TP + FN}
+\end{equation}
+
+其中，$TP$（True Positives）表示被正确检测出的真实目标数量，$FP$（False Positives）表示被误报为目标的背景区域数量，$FN$（False Negatives）表示未被检测出的真实目标数量。
+
+为了确定TP，标记点被定义为 $P= \{ x, y, s, t, \theta_{1}, \theta_{2} \}$。其中，$(x, y)$ 表示标记点的位置，$s$ 表示其形状，$t$ 表示其类型，$\theta_{1}, \theta_{2}$ 表示两个边缘之间的角度（以度为单位）。设 $P^{g}=\{x^{g}, y^{g}, s^{g}, t^{g}, \theta_{1}^{g}, \theta_{2}^{g} \}$ 为 GT（Ground Truth） 标记点，$P^{d}=\{x^{d}, y^{d}, s^{d}, t^{d}, \theta_{1}^{d}, \theta_{2}^{d} \}$ 为检测到的标记点。本文定义以下条件：
+
+\begin{subequations}
+  \begin{align}
+  (x^{g}-x^{d})^{2} + (y^{g}-y^{d})^{2} < I^{2} \\
+|\theta_{1}^{g} - \theta_{1}^{d}| < B \ or \ 360^{\circ} - |\theta_{1}^{g} - \theta_{1}^{d}| < B \\
+|\theta_{2}^{g} - \theta_{2}^{d}| < B \ or \ 360^{\circ} - |\theta_{2}^{g} - \theta_{2}^{d}| < B \\
+s^{g} = s^{d} \ and \ t^{g} = t^{d}
+  \end{align}
+  \end{subequations}
+  
+如果满足这些条件，可以认为 $P^{g}$ 被准确识别，并且 $P^{d}$ 为TP。
+
+本文将停车位定义为 $S=\{(x_{1}, y_{1}), (x_{2}, y_{2}), \theta_{s}\}$，其中 $(x_{1}, y_{1})$ 和 $(x_{2}, y_{2})$ 是两个标记点的坐标，$\theta_{s}$ 表示入口线的方向。对于一个 GT 停车位 $S_{g}=\{(x_{1}^{g}, y_{1}^{g}), (x_{2}^{g}, y_{2}^{g}), \theta_{s}^{g}\}$，如果检测到的停车位 $S_{d}=\{(x_{1}^{d}, y_{1}^{d}), (x_{2}^{d}, y_{2}^{d}), \theta_{s}^{d}\}$ 满足以下等式，则将其视为TP：
+\begin{subequations}
+  \begin{align}
+  (x_{1}^{g}-x_{1}^{d})^{2} + (y_{1}^{g}-y_{1}^{d})^{2} < I^{2} \\
+(x_{2}^{g}-x_{2}^{d})^{2} + (y_{2}^{g}-y_{2}^{d})^{2} < I^{2} \\
+|\theta_{s}^{g} - \theta_{s}^{d}| < B \ or \ 360^{\circ} - |\theta_{s}^{g} - \theta_{s}^{d}| < B
+  \end{align}
+  \end{subequations}
+  
+如果停车位的两个点位于目标停车位 (GT) 的 $I$ 个像素范围内，且 $S_{d}$ 和 $S_{g}$ 之间的角度差小于 $B$，则该停车位被视为真TP。对于$512 \times 512$的图像大小，$I$通常定为10，$B$通常定为30。
+% 对于 ps2.0，$I=10$；对于 CRPS-D，$I=8.53$，从 $10 \times \frac{512}{600}$ 调整，以适应较小的图像尺寸 $512 \times 512$。
+
+\section{本章小结}
+
+本章系统介绍了停车位检测领域的核心基础内容。首先，概述了ps2.0、PSV、SNU三个主流公开数据集，分析了各数据集的图像特征、标注特点及研究应用分布；其次，阐述了停车位检测的通用流程，涵盖图像输入、预处理、特征提取、检测分割及后处理等关键环节；最后，明确了模型评估指标，重点介绍了平均精度AP的计算方法，并界定了真阳性判定标准，为后续算法评估提供了统一基准。
