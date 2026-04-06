@@ -21,6 +21,13 @@
 
 （2）设计了面向停车位检测的半监督检测框架 SS-PSD，通过教师-学生学习范式挖掘未标注数据的潜在信息，为后续结构感知与时序建模方法的研究奠定基础。 
 
+\begin{figure}[!b]
+\centering
+\includegraphics[width=1\textwidth]{figures/chp2/pdf/equip.pdf}
+\caption{360度全景环视系统 \\Fig~\ref{fig_equip}~360-degree surround view system}
+\label{fig_equip}
+\end{figure}
+
 \section{大规模停车位数据集CRPS-D}
 
 \subsection{基本信息}
@@ -29,18 +36,16 @@ CRPS-D数据集包含 35379 张图像，其中训练集 29803 张，测试集 59
 
 % 为确保评估公平性，数据集采用严格的训练/测试划分策略：基于停车场标识、停车区域和采集时段进行分类，确保同一物理地点的图像不会同时出现在训练集和测试集中。对于视频序列数据，采用较大时间间隔抽帧，避免引入近乎重复的样本，保证测试集的独立性与代表性。 
 
-\begin{figure}[!h]
-\centering
-\includegraphics[width=1\textwidth]{figures/chp2/pdf/equip.pdf}
-\caption{360度全景环视系统 \\Fig~\ref{fig_equip}~360-degree surround view system}
-\label{fig_equip}
-\end{figure}
-
 
 \subsection{定量分析}
 本节通过详细的数据分析，展示 CRPS-D 数据集相较于现有公开数据集的优势与改进。
 
-\begin{table}[!h]
+（1）数据规模
+
+数据规模是现代视觉模型（如SAM\cite{kirillov2023segment}）具有较高性能的关键因素，也是本文构建大规模数据集的核心动机。从表 \ref{tab_datascale} 可以看出，CRPS-D 在图像数量和车位总数上均实现了显著提升：图像总数达 35739 张，分别是 ps2.0 的 2.94 倍和SNU的 1.57 倍；总车位数达 142081 个，约为 ps2.0 的 12.2 倍、SNU的 2.28 倍，为深度神经网络提供了更丰富的学习样本。
+从训练数据分布来看，CRPS-D 的训练集包含 29803 张图像，是 ps2.0 训练集的 3.03 倍，SNU 训练集的 1.63 倍；训练集中的车位数达 118057 个，是ps2.0的 12.46 倍，SNU 的 2.42 倍。从测试数据来看，CRPS-D 的测试集包含 5936 张图像，是 ps2.0 测试集的 2.54 倍，SNU测试集的 1.31 倍；测试集中的车位数达 24024 个，是 ps2.0 的 11.08 倍，SNU的 1.77 倍。
+
+\begin{table}[!t]
 \centering
 \setlength{\tabcolsep}{4.0mm}
 \caption{数据规模对比表 \\Table~\ref{tab_datascale}~Comparison results of data scale}
@@ -66,11 +71,6 @@ CRPS-D数据集包含 35379 张图像，其中训练集 29803 张，测试集 59
 \label{tab_datascale}
 \end{table} 
 
-（1）数据规模
-
-数据规模是现代视觉模型（如SAM\cite{kirillov2023segment}）具有较高性能的关键因素，也是本文构建大规模数据集的核心动机。从表 \ref{tab_datascale} 可以看出，CRPS-D 在图像数量和车位总数上均实现了显著提升：图像总数达 35739 张，分别是 ps2.0 的 2.94 倍和SNU的 1.57 倍；总车位数达 142081 个，约为 ps2.0 的 12.2 倍、SNU的 2.28 倍，为深度神经网络提供了更丰富的学习样本。
-从训练数据分布来看，CRPS-D 的训练集包含 29803 张图像，是 ps2.0 训练集的 3.03 倍，SNU 训练集的 1.63 倍；训练集中的车位数达 118057 个，是ps2.0的 12.46 倍，SNU 的 2.42 倍。从测试数据来看，CRPS-D 的测试集包含 5936 张图像，是 ps2.0 测试集的 2.54 倍，SNU测试集的 1.31 倍；测试集中的车位数达 24024 个，是 ps2.0 的 11.08 倍，SNU的 1.77 倍。
-
 除了数据规模外，数据密度也是衡量数据集质量的重要指标。为更准确地衡量数据集的信息密度，本文定义了车位-图像密度指标：
 \begin{equation}
  \mbox{车位-图像密度} = \frac{N_{slots}}{N_{images}}
@@ -81,7 +81,7 @@ CRPS-D数据集包含 35379 张图像，其中训练集 29803 张，测试集 59
 
 这种高密度特性意味着CRPS-D包含更复杂的空间上下文和更多重叠遮挡场景，能够促使模型学习更鲁棒的特征表示，而非简单的模板匹配，为训练高泛化能力的深度感知网络奠定了坚实基础。同时，大规模数据也为半监督学习提供了充足的标注样本，有助于更有效地利用未标注数据提升模型性能。
 
-\begin{table}[!h]
+\begin{table}[!t]
 \centering
 \caption{车位图像密度 \\Table~\ref{tab_density}~Density of parking slots }
 \begin{tabular}{lccccccccc}
@@ -99,16 +99,7 @@ CRPS-D数据集包含 35379 张图像，其中训练集 29803 张，测试集 59
 \end{table} 
 
 
-
-（2）场景分析
-
-为全面覆盖真实世界的复杂泊车环境，CRPS-D 数据集细分为八个场景子集，包括室内弱光、室内强光、室外正常日光、室外雨天、室外阴影、室外夜晚、倾斜车位和受损车位等多样化场景。
-从表 \ref{tab_sence} 可以看出，CRPS-D 在场景覆盖广度上实现了显著突破：不仅新增了室外夜晚和受损车位等挑战性场景，填补了现有数据集在极端条件下的空白，还在各细分场景的样本数量上实现了量级提升。
-这种多样化的场景覆盖和充足的样本数量，使得 CRPS-D 能够更全面地模拟真实世界的泊车环境，为模型训练提供更丰富的场景变体，有助于提升模型在复杂场景下的鲁棒性。
-图 \ref{fig_crpsd} 展示了各场景的示例图像，直观体现了 CRPS-D 更贴近真实泊车场景的特点。
-
-
-\begin{table}[!h]
+\begin{table}[!t]
 \centering
 \setlength{\tabcolsep}{1.0mm}
 \caption{测试集场景统计信息\\
@@ -127,27 +118,23 @@ Table~\ref{tab_sence}~Statistics for the scene data in the test set.}
 \end{table}
 
 
-\begin{figure}[!h]
+（2）场景分析
+
+为全面覆盖真实世界的复杂泊车环境，CRPS-D 数据集细分为八个场景子集，包括室内弱光、室内强光、室外正常日光、室外雨天、室外阴影、室外夜晚、倾斜车位和受损车位等多样化场景。
+从表 \ref{tab_sence} 可以看出，CRPS-D 在场景覆盖广度上实现了显著突破：不仅新增了室外夜晚和受损车位等挑战性场景，填补了现有数据集在极端条件下的空白，还在各细分场景的样本数量上实现了量级提升。
+这种多样化的场景覆盖和充足的样本数量，使得 CRPS-D 能够更全面地模拟真实世界的泊车环境，为模型训练提供更丰富的场景变体，有助于提升模型在复杂场景下的鲁棒性。
+图 \ref{fig_crpsd} 展示了各场景的示例图像，直观体现了 CRPS-D 更贴近真实泊车场景的特点。
+
+
+
+\begin{figure}[!t]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp2/pdf/sence.pdf}
 \caption{数据集示例图片 \\Fig~\ref{fig_crpsd}~Example images from the dataset}
 \label{fig_crpsd}
 \end{figure}
 
-（3）倾斜车位
-
-倾斜式停车位在狭窄街道中广泛应用，可有效提升道路空间利用率，是现实场景中的常见车位类型。但与垂直车位相比，倾斜车位检测难度更大，且常被现有数据集忽视。为此，本文专门提高了倾斜车位在数据集中的比例。
-倾斜车位占比计算公式如下：
-\begin{equation}
- \mbox{倾斜车位比例} = \frac{S_{slant}}{S_{Total}}
-\end{equation}
-其中，$S$ 表示对应类型的停车位数量。
-
-从表 \ref{tab_slant} 可以看出，CRPS-D数据集的倾斜车位占比达 11.75\%，显著高于 ps2.0 的 3.41\%和 SNU 的 6.86\%。从训练集来看，CRPS-D 的倾斜车位占比为 11.97\%，是 ps2.0 的 3.59 倍，SNU的 1.79 倍；从测试集来看，CRPS-D 的倾斜车位占比为 10.71\%，是 ps2.0 的 2.86 倍，SNU的 1.45 倍。
-
-这一比例更真实地反映了现实世界的车位分布，同时有助于缓解类别不平衡问题，提升模型对倾斜车位的检测能力，使模型在处理真实场景时表现更加稳定可靠。
-
-\begin{table}[!h]
+\begin{table}[!b]
 \centering
 \caption{倾斜停车位占比 \\
 Table~\ref{tab_slant}~Proportion of slanted parking slots.}
@@ -165,6 +152,19 @@ Table~\ref{tab_slant}~Proportion of slanted parking slots.}
 \end{tabular}
 \label{tab_slant}
 \end{table} 
+
+（3）倾斜车位
+
+倾斜式停车位在狭窄街道中广泛应用，可有效提升道路空间利用率，是现实场景中的常见车位类型。但与垂直车位相比，倾斜车位检测难度更大，且常被现有数据集忽视。为此，本文专门提高了倾斜车位在数据集中的比例。
+倾斜车位占比计算公式如下：
+\begin{equation}
+ \mbox{倾斜车位比例} = \frac{S_{slant}}{S_{Total}}
+\end{equation}
+其中，$S$ 表示对应类型的停车位数量。
+
+从表 \ref{tab_slant} 可以看出，CRPS-D数据集的倾斜车位占比达 11.75\%，显著高于 ps2.0 的 3.41\%和 SNU 的 6.86\%。从训练集来看，CRPS-D 的倾斜车位占比为 11.97\%，是 ps2.0 的 3.59 倍，SNU的 1.79 倍；从测试集来看，CRPS-D 的倾斜车位占比为 10.71\%，是 ps2.0 的 2.86 倍，SNU的 1.45 倍。
+
+这一比例更真实地反映了现实世界的车位分布，同时有助于缓解类别不平衡问题，提升模型对倾斜车位的检测能力，使模型在处理真实场景时表现更加稳定可靠。
 
 
 
