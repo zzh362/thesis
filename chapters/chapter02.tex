@@ -73,7 +73,7 @@ CRPS-D数据集包含 35379 张图像，其中训练集 29803 张，测试集 59
 
 除了数据规模外，数据密度也是衡量数据集质量的重要指标。为更准确地衡量数据集的信息密度，本文定义了车位-图像密度指标：
 \begin{equation}
- \mbox{车位-图像密度} = \frac{N_{slots}}{N_{images}}
+ \mbox{车位-图像密度} = \frac{\mbox{车位数}(N_{slots})}{\mbox{图像数}(N_{images})},
 \end{equation}
 其中，$N$ 表示对应样本数量。
 
@@ -158,7 +158,7 @@ Table~\ref{tab_slant}~Proportion of slanted parking slots.}
 倾斜式停车位在狭窄街道中广泛应用，可有效提升道路空间利用率，是现实场景中的常见车位类型。但与垂直车位相比，倾斜车位检测难度更大，且常被现有数据集忽视。为此，本文专门提高了倾斜车位在数据集中的比例。
 倾斜车位占比计算公式如下：
 \begin{equation}
- \mbox{倾斜车位比例} = \frac{S_{slant}}{S_{Total}}
+ \mbox{倾斜车位比例} = \frac{\mbox{倾斜车位数}(S_{slant})}{\mbox{总车位数}(S_{Total})},
 \end{equation}
 其中，$S$ 表示对应类型的停车位数量。
 
@@ -185,9 +185,8 @@ Table~\ref{tab_slant}~Proportion of slanted parking slots.}
 给定数据集，随机选取部分带标签数据组成有标签集\(\mathcal{D}_{L}=\{({\textbf{x}}_{l},{\textbf{y}}_{l})\}\)，剩余部分作为无标签集\(\mathcal{D}_{U}=\{({\textbf{x}}_{u})\}\)。对于尺寸为\(512\times512\)的图像\(\textbf{x}_{l}\)及其标签\(\textbf{y}_{l}\)，模型的目标是预测特征图\(\mathbb{R} \in \mathcal{S}\times \mathcal{S} \times \mathcal{N}\)，其中图像被划分为\(\mathcal{S}\times \mathcal{S}\)网格。参考DMPR-PS~\cite{huang2019dmpr}方法，特征图\(\mathbb{R}\)对应输入图像中的标线点，\(\mathcal{N}\)维特征描述每个点的属性。随后通过模板匹配判断点对是否构成有效的停车位入口线，过程可表示为：
 
 \begin{equation}
-\textbf{x}_{l} \xrightarrow{M_{\theta}} \mathbb{R}^{\mathcal{S}\times \mathcal{S} \times \mathcal{N}} \xrightarrow {\text{模版匹配}} \text{停车检测结果}
+\textbf{x}_{l} \xrightarrow{M_{\theta}} \mathbb{R}^{\mathcal{S}\times \mathcal{S} \times \mathcal{N}} \xrightarrow {\text{模版匹配}} \text{停车检测结果},
 \end{equation}
-
 其中\(M_{\theta}(\cdot)\)为预测标记点的模型，\(\theta\)为模型参数。与传统全监督方法不同，本文利用易获取的无标签图像\(\textbf{x}_{u}\)提升模型性能。 
 
 \subsection{网络架构}
@@ -260,7 +259,7 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 对于无标签数据损失，通过教师与学生模型的置信度引导掩码一致性建立无监督约束：
 
 \begin{equation}
-\mathcal{L}_{unsup}(\mathcal{D}_{U}, M_{\theta}^{S}, M_{\theta}^{T})=\mathcal{L}_{CGM}
+\mathcal{L}_{unsup}(\mathcal{D}_{U}, M_{\theta}^{S}, M_{\theta}^{T})=\mathcal{L}_{CGM}.
 \end{equation}
 
 总目标函数由有标签和无标签数据损失组成：
@@ -274,18 +273,7 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 \end{equation}
 其中 $\beta=\frac{N_{\mathcal{D}_{U}}}{N_{\mathcal{D}_{L}}}$ 为无标签与有标签样本数量比，平衡两类损失的贡献。
 
-\section{实验结果及分析}
-本节所有实验均在同一硬件平台上进行，具体包括一块Nvidia 2080Ti GPU（12GB显存）和一台配备Intel(R) Xeon(R) E5-2680 v4 @ 2.40GHz CPU的服务器环境。模型训练使用PyTorch框架实现。
-
-\subsection{不同数据划分的结果}
-
-本文参照Mean Teacher\cite{tarvainen2017mean}方法，通过对数据集进行比例抽样来评估所提方法的性能。具体而言，将数据集划分为有标签集和无标签集，其中有标签集比例为\(1/n\)，无标签集比例为\((1 - \frac{1}{n})\)。对于CRPS-D数据集和公开数据集ps2.0，均采用\(1/24\)、\(1/12\)、\(1/8\)、\(1/4\)和\(1/2\)的有标签比例进行实验。由于 SS-PSD 是该领域首个半监督解决方案，因此只能与现有的公开全监督方案进行对比（DMPR-PS$^{*}$ 与 GCN$^{*}$，其中$^{*}$表示已使用 CRPS-D 数据集重新训练）。
-
-（1）CRPS-D 实验结果分析
-
-从表 \ref{tab_crpsd} 可以看出，在 CRPS-D 数据集上，本文方法在不同标注比例下均显著优于现有全监督方法：在标注比例为\(1/24\)（仅 1242 张标注图像）时，本文方法的平均精度（\(AP\)）达到 71.72\%，较 DMPR-PS 提升了 19.02 个百分点，较 GCN 提升了 16.49 个百分点，展现了在标注数据极度稀缺情况下的优越性能；在标注比例为\(1/12\)和\(1/8\)时，本文方法分别达到 79.75\% 和 81.03\% 的\(AP\)，较基线方法提升了 6-12 个百分点，表明随着标注数据的增加，本文方法仍能保持显著优势；即使在标注比例为\(1/4\)和\(1/2\)时，本文方法依然能够维持性能领先，分别达到 83.78\% 和 86.51\% 的\(AP\)。
-
-\begin{table}[!h]
+\begin{table}[!b]
 \centering
 \caption{不同标注比例下与开源SoTA方法对比（CPPS-D）\\
 Table~\ref{tab_crpsd}~Comparison with open-source SoTA methods under different label ratios (CPPS-D)}
@@ -303,6 +291,18 @@ GCN$^{*}$\cite{min2021attentional}   & 55.23\% & 63.32\% & 67.80\% & 72.57\% & 7
 \end{tabular}
 \label{tab_crpsd}
 \end{table}
+
+\section{实验结果及分析}
+本节所有实验均在同一硬件平台上进行，具体包括一块Nvidia 2080Ti GPU（12GB显存）和一台配备Intel(R) Xeon(R) E5-2680 v4 @ 2.40GHz CPU的服务器环境。模型训练使用PyTorch框架实现。
+
+\subsection{不同数据划分的结果}
+
+本文参照Mean Teacher\cite{tarvainen2017mean}方法，通过对数据集进行比例抽样来评估所提方法的性能。具体而言，将数据集划分为有标签集和无标签集，其中有标签集比例为\(1/n\)，无标签集比例为\((1 - \frac{1}{n})\)。对于CRPS-D数据集和公开数据集ps2.0，均采用\(1/24\)、\(1/12\)、\(1/8\)、\(1/4\)和\(1/2\)的有标签比例进行实验。由于 SS-PSD 是该领域首个半监督解决方案，因此只能与现有的公开全监督方案进行对比（DMPR-PS$^{*}$ 与 GCN$^{*}$，其中$^{*}$表示已使用 CRPS-D 数据集重新训练）。
+
+（1）CRPS-D 实验结果分析
+
+从表 \ref{tab_crpsd} 可以看出，在 CRPS-D 数据集上，本文方法在不同标注比例下均显著优于现有全监督方法：在标注比例为\(1/24\)（仅 1242 张标注图像）时，本文方法的平均精度（\(AP\)）达到 71.72\%，较 DMPR-PS\cite{huang2019dmpr} 提升了 19.02 个百分点，较 GCN 提升了 16.49 个百分点，展现了在标注数据极度稀缺情况下的优越性能；在标注比例为\(1/12\)和\(1/8\)时，本文方法分别达到 79.75\% 和 81.03\% 的\(AP\)，较基线方法提升了 6-12 个百分点，表明随着标注数据的增加，本文方法仍能保持显著优势；即使在标注比例为\(1/4\)和\(1/2\)时，本文方法依然能够维持性能领先，分别达到 83.78\% 和 86.51\% 的\(AP\)。
+
 
 （2）ps2.0 实验结果分析
 
@@ -400,9 +400,9 @@ Table~\ref{tab_recent}~Comparison results with recent methods.}
 
 
 \subsection{消融实验}
-本节旨在探究置信度引导掩码（CGM）一致性和自适应特征扰动（Adaptive-VAT）对所提方法性能的影响。所有实验均基于 CRPS-D 数据集，使用标注数据比例设定为 1/12。各组件的具体贡献详见表 \ref{tab_ab}，该表同时展示了标记点和停车位的检测结果。
+本节旨在探究置信度引导掩码（CGM）一致性和自适应特征扰动（Adaptive-VAT）对所提方法性能的影响。所有实验均基于 CRPS-D 数据集，使用标注数据比例设定为 1/12。各组件的具体贡献详见表 \ref{tab_ab}，该表同时展示了标记点（$AP_{marking-point}$）和停车位的检测结果（$AP_{parking-slot}$）。
 
-实验结果表明，相较于仅采用均方误差（MSE）损失的半监督基线 MT 方法，CGM 一致性约束使停车位检测平均精度（$AP_{parking-slot}$）提升了 3.6 个百分点，而 Adaptive-VAT 的引入进一步将性能提高了 0.82 个百分点。
+实验结果表明，相较于仅采用均方误差（MSE）损失的半监督基线 MT 方法，CGM 一致性约束使停车位检测平均精度提升了 3.6 个百分点，而 Adaptive-VAT 的引入进一步将性能提高了 0.82 个百分点。
 
 \begin{table}[!h]
 \centering

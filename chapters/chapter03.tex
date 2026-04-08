@@ -86,7 +86,7 @@ SA-CutMix 从结构保持与信息干扰两个角度出发：一方面保留关�
 
 为此，本文提出注意力引导的特征插值模块（AGI Module），通过引入轻量注意力机制提升特征在结构区域的表达能力，增强描述符对结构关系的建模效果。具体地，设输入特征图为 $F\in R^{B\times C\times H\times W}$，其中 $B$ 为 batch 大小，$C$ 为通道数，$H,W$ 为特征图尺寸。首先通过 $1\times1$ 卷积操作提取通道注意力响应，生成单通道注意力图 $A\in R^{B\times1\times H\times W}$，并使用 Sigmoid 激活函数将其归一化至区间 $\left[0,1\right]$，以获得每个空间位置的显著性估计：
 \begin{equation}
-    A=\sigma\left({\mathrm{Conv}}_{1\times1}\left(F\right)\right)
+    A=\sigma\left({\mathrm{Conv}}_{1\times1}\left(F\right)\right),
 \end{equation}
 
 该注意力图反映当前图像中结构区域的重要性分布，可用于强调具有结构语义的显著区域并抑制冗余或噪声背景。随后，原始特征图与注意力图逐元素相乘，得到加权特征图 $F\prime=F\odot A$，该操作在保留空间连续性的同时增强了结构敏感区域的响应，有助于提升后续插值描述符的判别性。
@@ -122,11 +122,11 @@ c.mask 中标记出参与训练的位置，用于规避空区域的梯度干扰�
 
 模型输出的点位预测结果与标签进行逐点比较，计算方式如下：
 \begin{equation}
-    \mathcal{L}_\mathrm{\mathrm{PR}}=\frac{1}{N_{\mathrm{mask}}}\left.\ |\left(\hat{T}-T\right)\odot M\right.|_2
+    \mathcal{L}_\mathrm{\mathrm{PR}}=\frac{1}{N_{\mathrm{mask}}}\left.\ |\left(\hat{T}-T\right)\odot M\right.|_2,
 \end{equation}
 其中，$\hat{T}, T\in R^{B\times3\times H\times W}$ 分别表示预测与标签张量，$M$ 为 mask，$\odot$ 表示逐元素乘法，$N_{\mathrm{mask}}$ 为 mask 中非零位置的数量。损失计算时分别对置信度与偏移误差加权平均。该设计不仅提升了关键点位置的回归精度，同时使模型在关注结构区域时具备更强的几何稳定性，进一步增强了特征匹配的定位一致性。
 
-（2）稀配聚焦损失（Structure-aware Pairwise Focal Loss, SPF-Loss）
+（2）稀配聚焦损失（SPF-Loss）
 
 关键点匹配任务本质上可视为一个二分类问题，即判断任意两个候选关键点是否构成真实匹配对。传统方法常采用 Binary Cross Entropy（BCE）损失，但在“结构模糊区域”中，例如存在遮挡、模糊或车位密集的情况下，模型往往难以聚焦于困难样本，容易出现误匹配。为此，本文提出稀配聚焦损失（SPF-Loss），引入焦点机制增强对难匹配样本的关注，同时结合结构约束以提升对稀疏边对的判别能力，从而提高整体匹配精度与鲁棒性。
 
@@ -134,12 +134,11 @@ c.mask 中标记出参与训练的位置，用于规避空区域的梯度干扰�
 
 本文采用 Focal Loss\cite{lin2017focal} 的形式，将传统 BCE 扩展为：
 \begin{equation}
-    \mathcal{L}_\mathrm{SPF}=-\frac{1}{N_{\mathrm{valid}}}\sum_{i,j} M_{ij}\cdot\left[\alpha\left(1-p_{ij}\right)^\gamma y_{ij}^\prime\log{\left(p_{ij}+\varepsilon\right)}+\alpha p_{ij}^\gamma\left(1-y_{ij}^\prime\right)\log{\left(1-p_{ij}+\varepsilon\right)}\right]
+    \mathcal{L}_\mathrm{SPF}=-\frac{1}{N_{\mathrm{valid}}}\sum_{i,j} M_{ij}\cdot\left[\alpha\left(1-p_{ij}\right)^\gamma y_{ij}^\prime\log{\left(p_{ij}+\varepsilon\right)}+\alpha p_{ij}^\gamma\left(1-y_{ij}^\prime\right)\log{\left(1-p_{ij}+\varepsilon\right)}\right],
 \end{equation}
-
 其中，$p_{ij}$ 表示模型预测的匹配概率，$\alpha$ 为类别权重调节因子，$\gamma$ 控制聚焦程度，$\varepsilon$ 是为防止数值不稳定引入的微小常数，$N_{\mathrm{valid}}$ 为所有有效点对数量。由于 Focal Loss 是专为二分类任务设计的，其要求标签为二值形式（正样本为 1，负样本为 0），因此构造二值化目标标签：
 \begin{equation}
-    y_{ij}\prime=\mathbb{1}\left(y_{ij}=1\right)
+    y_{ij}\prime=\mathbb{1}\left(y_{ij}=1\right).
 \end{equation}
 
 即当 $y_{ij}=1$ 时，$y_{ij}\prime = 1$；否则为 0。该设计不仅解决了原始多标签匹配信息与 Focal Loss 结构不兼容的问题，同时避免了无效区域带来的梯度干扰，使得模型能更加关注边界模糊、结构遮挡、复杂形状干扰等困难匹配场景，训练过程中自动对高难度匹配对赋予更大梯度，从而显著提升结构推理能力。
@@ -148,9 +147,8 @@ c.mask 中标记出参与训练的位置，用于规避空区域的梯度干扰�
 
 上述两种损失在训练过程中被共同优化，整体损失函数形式为：
 \begin{equation}
-    \mathcal{L}_\mathrm{total}=\lambda_1\cdot\mathcal{L}_\mathrm{PR}+\lambda_2\cdot\mathcal{L}_\mathrm{SPF}
+    \mathcal{L}_\mathrm{total}=\lambda_1\cdot\mathcal{L}_\mathrm{PR}+\lambda_2\cdot\mathcal{L}_\mathrm{SPF},
 \end{equation}
-
 其中，$\lambda_1、\lambda_2$为损失项的加权系数，用于平衡结构判别与点位回归的相对重要性。实验表明，该损失设计能够有效提升模型在复杂环境下的匹配鲁棒性与几何一致性，尤其在面对结构遮挡、视角变化或多目标干扰等挑战性场景时，性能提升显著。本文选取在验证集上综合性能最优的一组权重参数，并在所有实验中保持一致。最终，点位回归损失与结构感知匹配损失的权重分别设置为 $\lambda_1 = 10$，$\lambda_2 = 1$。
 
 \section{实验结果及分析}
@@ -201,17 +199,17 @@ Table~\ref{tab_2crps}~Comparison between the proposed method and GCN\cite{min202
         \toprule
          方法 & 主干网络 & Precision & Recall & AP & AP提升 \\
         \midrule
-            GCN$^{*}$  & \multirow{2}{*}{Resnet18} & 91.38\% & 82.04\% & 78.01\%  & \multirow{2}{*}{4.37\%}\\
+            GCN$^{*}$\cite{min2021attentional}  & \multirow{2}{*}{Resnet18} & 91.38\% & 82.04\% & 78.01\%  & \multirow{2}{*}{4.37\%}\\
              本文方法  &  & 91.56\%	& 84.54\%	& 82.38\%  & \\
 
         \midrule
-             GCN$^{*}$  & \multirow{2}{*}{Resnet50} & 90.91\%	& 83.22\%	& 78.63\%  & \multirow{2}{*}{3.47\%}\\
+             GCN$^{*}$\cite{min2021attentional}  & \multirow{2}{*}{Resnet50} & 90.91\%	& 83.22\%	& 78.63\%  & \multirow{2}{*}{3.47\%}\\
              本文方法  &  & 91.11\% &	84.89\%	& 82.10\%	  & \\
         \midrule
-              GCN$^{*}$  & \multirow{2}{*}{Darknet} & 91.38\%	& 83.27\%	& 79.01\%  & \multirow{2}{*}{3.92\%}\\
+              GCN$^{*}$\cite{min2021attentional}  & \multirow{2}{*}{Darknet} & 91.38\%	& 83.27\%	& 79.01\%  & \multirow{2}{*}{3.92\%}\\
              本文方法  &  & 91.39\% &	85.00\%	& 82.93\%	  & \\
         \midrule
-              GCN$^{*}$  & \multirow{2}{*}{Vgg16} & 92.43\%	& 82.75\%	& 79.02\%  & \multirow{2}{*}{4.56\%}\\
+              GCN$^{*}$\cite{min2021attentional}  & \multirow{2}{*}{Vgg16} & 92.43\%	& 82.75\%	& 79.02\%  & \multirow{2}{*}{4.56\%}\\
              本文方法  &  & 92.21\%	& 85.54\%	& 83.58\%  & \\
         \bottomrule
     \end{tabular}
@@ -234,7 +232,7 @@ Table~\ref{tab_2ab}~Impact of incremental module integration on detection perfor
 \small
 \begin{tabular}{ccccc}
 \toprule
-    Baseline(仅主干网络) & AGI Module & SPF-Loss  & SA-CutMix &  $AP_{parking-slot}$ \\
+    Baseline(仅主干网络) & AGI Module & SPF-Loss  & SA-CutMix &  $AP$ \\
 \midrule
     \checkmark  &  &  &  &  77.76\% \\
      \checkmark & \checkmark &  &  &  78.94\% \\

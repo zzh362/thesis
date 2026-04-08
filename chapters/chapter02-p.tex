@@ -52,18 +52,18 @@ SNU 数据集由首尔大学 Do和Choi\cite{do2020context}发布，包含 18299 
 在停车位检测研究中，传统评估指标多采用查准率（Precision）和查全率（Recall）。然而，这两个指标对阈值选择较为敏感，不同的阈值设置可能会对评估结果产生显著影响，从而降低评估的可靠性。为了提供更全面、更稳定的评估，本文采用平均精度（Average Precision, AP）作为主要评估指标，具体应用\textit{PASCAL VOC 2010}中的全点插值方法，其计算方式如下：
 
 \begin{equation}
-AP = \sum \Big((Recall_{j+1}-Recall_{j}) \times Precision_{j+1} \Big)
+AP = \sum \Big((Recall_{j+1}-Recall_{j}) \times Precision_{j+1} \Big),
 \end{equation}
 其中 $j$ 是满足 $Recall_{j} \neq Recall_{j+1}$ 的索引。
 
 查准率和查全率的计算公式如下：
 
 \begin{equation}
-Precision = \frac{TP}{TP + FP}
+Precision = \frac{TP}{TP + FP},
 \end{equation}
 
 \begin{equation}
-Recall = \frac{TP}{TP + FN}
+Recall = \frac{TP}{TP + FN},
 \end{equation}
 式中，$TP$（True Positives）表示正确检测出的真实目标数量，$FP$（False Positives）表示误报为目标的背景区域数量，$FN$（False Negatives）表示未被检测出的真实目标数量。
 

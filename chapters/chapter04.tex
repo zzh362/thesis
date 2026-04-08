@@ -34,7 +34,7 @@
 设当前帧与前一帧通过骨干网络提取的特征分别为：
 \begin{equation}
     F_t \in \mathbb{R}^{B \times C \times H \times W}, \
-    F_{t-1} \in \mathbb{R}^{B \times C \times H \times W}
+    F_{t-1} \in \mathbb{R}^{B \times C \times H \times W},
 \end{equation}
 其中 $B$ 表示批量大小，$C$ 为通道数，$H$ 与 $W$ 为空间分辨率。跨帧自注意力模块以当前帧特征作为查询（Query），以前一帧特征作为键（Key）和值（Value），通过注意力机制显式建模两帧之间的空间对应关系。
 
@@ -42,11 +42,11 @@
 \begin{equation}
 Q = \phi_q(F_t), \
 K = \phi_k(F_{t-1}), \
-V = \phi_v(F_{t-1})
+V = \phi_v(F_{t-1}),
 \end{equation}
 其中 $\phi_q(\cdot)$、$\phi_k(\cdot)$ 和 $\phi_v(\cdot)$ 为可学习的线性投影函数。为提升模型对不同语义子空间的建模能力，引入多头注意力机制：将通道维度划分为 $N$ 个注意力头，并将空间维度展开为 $HW$，得到：
 \begin{equation}
-Q, K, V \in \mathbb{R}^{B \times N \times \frac{C}{N} \times HW}
+Q, K, V \in \mathbb{R}^{B \times N \times \frac{C}{N} \times HW}.
 \end{equation}
 
 在每一个注意力头中，采用缩放点积注意力计算当前帧与前一帧之间的空间相关性：
@@ -57,7 +57,7 @@ A = \mathrm{Softmax}(\frac{QK^{\top}}{\sqrt{C/N}}),
 
 基于计算得到的注意力权重，对前一帧的值特征进行加权求和，实现跨帧信息的聚合：
 \begin{equation}
-F_{t}^{\mathrm{attn}} = A \cdot V
+F_{t}^{\mathrm{attn}} = A \cdot V.
 \end{equation}
 
 随后，将多头注意力的输出在通道维度上进行拼接，并通过上采样恢复为原始空间结构，得到融合后的特征表示:
@@ -87,7 +87,7 @@ $g = \text{GAP}(F_t)$,
 \begin{equation}
 G_c = \sigma\!\left( W_c g \right),
 \quad
-G_c \in \mathbb{R}^{B \times C \times 1 \times 1}
+G_c \in \mathbb{R}^{B \times C \times 1 \times 1}.
 \end{equation}
 
 该权重反映了不同通道在当前帧中的全局响应强度，有助于抑制低置信度语义特征的干扰。
@@ -96,7 +96,7 @@ G_c \in \mathbb{R}^{B \times C \times 1 \times 1}
 \begin{equation}
 M_s = \sigma\!\left( W_2 \, \delta \!\left( \text{BN}( W_1 * F_t ) \right) \right),
 \quad
-M_s \in \mathbb{R}^{B \times 1 \times H \times W}
+M_s \in \mathbb{R}^{B \times 1 \times H \times W},
 \end{equation}
 其中 $*$ 表示卷积操作，$\delta(\cdot)$ 为 ReLU 激活函数，$M_s$ 表示空间维度上的结构显著性权重。该掩码能够自适应地聚焦于停车位边线、角点等关键结构区域，同时弱化背景区域对时序融合的干扰。
 
@@ -132,7 +132,7 @@ $I_{t-1}, I_t \in \mathbb{R}^{H \times W \times 3}$,
 $\mathcal{P}_t = \{ p_i \}_{i=1}^{N}$.
 时序鲁棒增强的核心原则是保持关键点坐标不变，即增强操作满足：
 \begin{equation}
-\mathcal{T}(p_i) = p_i
+\mathcal{T}(p_i) = p_i,
 \end{equation}
 从而确保监督信号在空间上的一致性，避免几何变换对标注的破坏。
 
@@ -141,7 +141,7 @@ $\mathcal{P}_t = \{ p_i \}_{i=1}^{N}$.
 （1）首先，对相邻帧施加同步光度增强，模拟环境光照在短时间内的整体变化。具体而言，对两帧图像同时进行亮度与对比度扰动以及轻微高斯模糊处理：
 \begin{equation}
 I'_{t-1} = \mathcal{A}_{\text{sync}}(I_{t-1}), \
-I'_{t} = \mathcal{A}_{\text{sync}}(I_{t})
+I'_{t} = \mathcal{A}_{\text{sync}}(I_{t}).
 \end{equation}
 
 该操作保持帧间一致性，有助于模型学习对全局光照变化的不变性，增强在不同光照条件下的检测稳定性。
@@ -159,12 +159,13 @@ I'_{t} = \mathcal{A}_{\text{sync}}(I_{t})
 r, & (x,y) \in \Omega_{\text{occ}} \\
 \tilde{I}_{t}(x, y), & \text{otherwise}
 \end{cases}
+,
 \end{equation}
 其中 $\Omega_{\text{occ}}$ 表示遮挡区域，$r$ 为随机颜色值。该操作模拟车辆、行人或环境物体对停车位边线的局部遮挡，促使模型利用时序上下文信息补偿缺失的结构信息，增强对部分遮挡场景的处理能力。
 
 （4）最后，对当前帧施加轻微的颜色扰动，以 HSV 空间中的饱和度与色调变化形式体现，进一步模拟复杂环境下的成像差异。经过上述增强处理后，得到最终用于训练的时序输入对：
 \begin{equation}
-(\hat{I}_{t-1}, \hat{I}_{t}, \mathcal{P}_t)
+(\hat{I}_{t-1}, \hat{I}_{t}, \mathcal{P}_t),
 \end{equation}
 其中关键点标注 $\mathcal{P}_t$ 在整个增强过程中保持不变。
 
@@ -186,7 +187,7 @@ r, & (x,y) \in \Omega_{\text{occ}} \\
 
 PSTD 数据集中的样本均由同一采集设备在短时间间隔内连续获取，相邻帧之间视角变化较小，停车位的空间结构整体保持一致，但在光照条件、局部遮挡、成像噪声及运动模糊等方面存在自然变化，能够较好地模拟真实自动泊车场景中的视频输入特性（如图 \ref{fig_pstd} 所示）。在数据构建过程中，本文以当前帧作为监督目标帧，并选取其前一帧作为历史参考帧，形成二帧时序输入对：
 \begin{equation}
-(I_{t-1}, I_{t})
+(I_{t-1}, I_{t}),
 \end{equation}
 其中仅对当前帧 $I_{t}$ 使用原始CRPS-D数据集中的停车位关键点标注作为监督信号，从而避免跨帧标注不一致问题。
 
@@ -199,7 +200,7 @@ PSTD 数据集中的样本均由同一采集设备在短时间间隔内连续获
 \subsection{对比实验}
 为验证所提出方法的有效性，本节在 PSTD 数据集上进行了充分的对比实验。表 \ref{tab_pstc} 给出了本文方法与近期代表性停车位检测方法在 PSTD 时序数据集上的对比结果。由于现有停车位检测研究主要集中于单帧图像场景，当前该领域尚不存在公开可用的时序停车位检测数据集，因此本文基于自构建的 PSTD 数据集开展时序对比实验。为保证对比的公平性与可复现性，本文选取具有公开实现的代表性方法，并在PSTD数据集上重新训练与测试其模型性能。
 
-从实验结果可以看出，本文方法在查准率（Precision）、查全率（Recall）以及平均精度（AP）三项指标上均取得了最优表现。与基于图结构建模的 GCN 方法相比，本文方法在 AP 指标上提升了 9.77\%，表明引入时序信息后，模型在复杂场景下对停车位结构的整体识别能力得到了显著增强。相较于 DMPR-PS 方法，本文方法在查准率和查全率上分别提升了 0.96\% 和 0.39\%，同时 AP 提升 2.01\%，说明所提出的跨帧特征建模与动态时序融合策略能够在保持高召回率的同时，有效减少误检情况。
+从实验结果可以看出，本文方法在查准率（Precision）、查全率（Recall）以及平均精度（AP）三项指标上均取得了最优表现。与基于图结构建模的 GCN\cite{min2021attentional} 方法相比，本文方法在 AP 指标上提升了 9.77\%，表明引入时序信息后，模型在复杂场景下对停车位结构的整体识别能力得到了显著增强。相较于 DMPR-PS\cite{huang2019dmpr} 方法，本文方法在查准率和查全率上分别提升了 0.96\% 和 0.39\%，同时 AP 提升 2.01\%，说明所提出的跨帧特征建模与动态时序融合策略能够在保持高召回率的同时，有效减少误检情况。
 
 需要指出的是，尽管上述对比方法原本设计用于单帧停车位检测任务，但在 PSTD 数据集上的重新训练结果仍能够作为合理的对比基线，用于评估不同方法在连续帧场景下的检测性能。实验结果表明，单帧方法在面对帧间退化与遮挡时存在一定性能瓶颈，而本文提出的多帧时序停车位检测方法通过跨帧自注意力建模、动态结构感知融合以及时序鲁棒增强策略，能够更充分地利用时序上下文信息，从而在连续场景下取得更加稳定且准确的检测效果。
 
@@ -212,8 +213,8 @@ Table~\ref{tab_pstc} Comparison with open-source SoTA methods}
 \toprule
     方法 &  Precision & Recall &  AP\\
 \midrule
-       GCN\cite{min2021attentional}  &  87.00\%	& 86.44\%	& 82.20\% \\
-       DMPR-PS\cite{huang2019dmpr} &  91.57\%	& 91.94\%	& 89.96\% \\
+       GCN$^{*}$\cite{min2021attentional}  &  87.00\%	& 86.44\%	& 82.20\% \\
+       DMPR-PS$^{*}$\cite{huang2019dmpr} &  91.57\%	& 91.94\%	& 89.96\% \\
        \textbf{Ours} &   \textbf{92.53\%} & \textbf{92.33\%} & \textbf{91.97\%}\\
 \bottomrule
 \end{tabular}
