@@ -115,7 +115,15 @@ Jiang等人\cite{jiang2020detection}提出了一种集成深度学习与经典�
 
 （3）提出多帧时序特征融合的停车位检测方法。在单帧结构感知检测方法的基础上，针对真实驾驶场景中连续帧条件下检测结果易受遮挡和视角变化影响的问题，本文进一步提出了一种多帧时序特征融合的停车位检测方法。通过融合连续帧中的结构感知表示，实现对停车位时序一致性的建模，有效提升检测结果在时间维度上的鲁棒性。
 
-本文的研究工作呈现逐步递进关系：首先构建数据集并设计半监督方法，然后在此基础上提出结构感知的端到端检测框架，最后进一步引入时序信息提升模型在复杂场景下的稳定性与鲁棒性。
+如图 \ref{fig_arch} 所示，本文的研究工作呈现逐步递进关系：首先构建数据集并设计半监督方法，然后在此基础上提出结构感知的端到端检测框架，最后进一步引入时序信息提升模型在复杂场景下的稳定性与鲁棒性。
+
+\begin{figure}[!h] % use float package if you want it here
+%\setlength{\abovecaptionskip}{-0.2cm} %调整图片caption与正文之间的间距，table同理。可自己调整。
+  \centering
+  \includegraphics[width=1\linewidth]{figures/chp0/arch.pdf}
+  \caption{论文研究内容  \\Fig~\ref{fig_arch}~Research content of the thesis}
+  \label{fig_arch}
+\end{figure}
 
 \section{论文组织结构}
 
