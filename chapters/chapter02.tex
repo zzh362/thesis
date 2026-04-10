@@ -51,7 +51,7 @@ CRPS-D数据集包含 35379 张图像，其中训练集 29803 张，测试集 59
 \caption{数据规模对比表 \\Table~\ref{tab_datascale}~Comparison results of data scale}
 \begin{tabular}{llccc}
         \toprule
-         数据集  & & ps2.0\cite{zhang2018vision} & SNU\cite{do2020context} & \textbf{Ours} \\
+         数据集  & & ps2.0\cite{zhang2018vision} & SNU\cite{do2020context} & Ours \\
         \midrule
              \multirow{3}{*}{总图像数} & 训练集 & 9827 & 18299 & 29803  \\
               & 测试集 & 2338 &	4518	&5936   \\
@@ -73,9 +73,8 @@ CRPS-D数据集包含 35379 张图像，其中训练集 29803 张，测试集 59
 
 除了数据规模外，数据密度也是衡量数据集质量的重要指标。为更准确地衡量数据集的信息密度，本文定义了车位-图像密度指标：
 \begin{equation}
- \mbox{车位-图像密度} = \frac{\mbox{车位数}(N_{slots})}{\mbox{图像数}(N_{images})},
+ \mbox{车位-图像密度}\rho = \frac{\mbox{总车位数}}{\mbox{总图像数}}.
 \end{equation}
-其中，$N$ 表示对应样本数量。
 
 如表 \ref{tab_density} 所示，CRPS-D 的车位-图像密度高达 3.98，远高于 ps2.0 的 0.96 和 SNU 的 2.74。从训练集密度来看，CRPS-D 的密度为 3.96，是ps2.0 的 4.13 倍，SNU 的 1.48 倍；从测试集密度来看，CRPS-D 的密度为 4.05，是 ps2.0 的 4.35 倍，SNU的 1.35 倍。
 
@@ -86,13 +85,13 @@ CRPS-D数据集包含 35379 张图像，其中训练集 29803 张，测试集 59
 \caption{车位图像密度 \\Table~\ref{tab_density}~Density of parking slots }
 \begin{tabular}{lccccccccc}
 \toprule
- & \multicolumn{3}{c}{ps2.0\cite{zhang2018vision}} & \multicolumn{3}{c}{SNU\cite{do2020context}} & \multicolumn{3}{c}{\textbf{Ours}} \\\cmidrule{2-4}\cmidrule{5-7}\cmidrule{8-10}%
+ & \multicolumn{3}{c}{ps2.0\cite{zhang2018vision}} & \multicolumn{3}{c}{SNU\cite{do2020context}} & \multicolumn{3}{c}{Ours} \\\cmidrule{2-4}\cmidrule{5-7}\cmidrule{8-10}%
  
-    & $N_{slots}$ &$N_{images}$ & 密度 & $N_{slots}$ &$N_{images}$ & 密度 & $N_{slots}$ &$N_{images}$ & 密度 \\
+    & 车位数 & 图像数 & $\rho$ & 车位数 & 图像数 & $\rho$ & 车位数 & 图像数 & $\rho$ \\
 \midrule
      训练集 & 9476 & 9827 & 0.96 & 48886 & 18299 & 2.67 & 118057 & 29803 & \textbf{3.96}  \\
     测试集 & 2168 & 2338 & 0.93 & 13545 & 4518 & 3.00 & 24024 & 5936 & \textbf{4.05}  \\
-    总数 & 11644 & 12165 & \textbf{0.96} & 62431 & 22817 & \textbf{2.74} & 142081 & 35739 & \textbf{3.98}  \\
+    总数 & 11644 & 12165 & 0.96 & 62431 & 22817 & 2.74 & 142081 & 35739 & \textbf{3.98}  \\
 \bottomrule
 \end{tabular}
 \label{tab_density}
@@ -111,7 +110,7 @@ Table~\ref{tab_sence}~Statistics for the scene data in the test set.}
     & 弱光 & 强光 & 正常日光 & 雨天 & 阴影 & 夜晚 & 倾斜车位 & 受损车位 & \\
     \midrule
     ps2.0\cite{zhang2018vision} & \multicolumn{2}{c}{226} & 693 & 244 & 1127 & / & 48 & / & 2338 \\
-    \textbf{Ours} & 545 & 786 & 1703 & 323 & 1389 & 86 & 802 & 302 & 5936 \\
+    Ours & 545 & 786 & 1703 & 323 & 1389 & 86 & 802 & 302 & 5936 \\
     \bottomrule
 \end{tabular}
 \label{tab_sence}
@@ -136,18 +135,19 @@ Table~\ref{tab_sence}~Statistics for the scene data in the test set.}
 
 \begin{table}[!b]
 \centering
+\setlength{\tabcolsep}{0.8mm}
 \caption{倾斜停车位占比 \\
 Table~\ref{tab_slant}~Proportion of slanted parking slots.}
 \begin{tabular}{lccccccccc}
 \toprule
- & \multicolumn{3}{c}{ps2.0\cite{zhang2018vision}} & \multicolumn{3}{c}{SNU\cite{do2020context}} & \multicolumn{3}{c}{\textbf{Ours}} \\\cmidrule{2-4}\cmidrule{5-7}\cmidrule{8-10}%
+ & \multicolumn{3}{c}{ps2.0\cite{zhang2018vision}} & \multicolumn{3}{c}{SNU\cite{do2020context}} & \multicolumn{3}{c}{Ours} \\\cmidrule{2-4}\cmidrule{5-7}\cmidrule{8-10}%
  
-    & $S_{slant}$ &$S_{Total}$ & 占比 & $S_{slant}$ &$S_{Total}$ & 占比
-    & $S_{slant}$ &$S_{Total}$ & 占比 \\
+    & 倾斜车位 & 总车位 & $\alpha$ & 倾斜车位 &总车位 & $\alpha$
+    & 倾斜车位 & 总车位 & $\alpha$ \\
 \midrule
     训练集 & 316 & 9476 & 3.33\% & 3276 & 48886 & 6.70\% & 14126 & 118057 & \textbf{11.97\%}  \\
     测试集 & 81 & 2168 & 3.74\% & 1004 & 13545 & 7.41\% & 2573 & 24024 & \textbf{10.71\%}  \\
-    总数 & 397 & 11644 & \textbf{3.41\%} & 4280 & 62431 & \textbf{6.86\%} & 16699 & 142081 & \textbf{11.75\%}  \\
+    总数 & 397 & 11644 & 3.41\% & 4280 & 62431 & 6.86\% & 16699 & 142081 & \textbf{11.75\%}  \\
 \bottomrule
 \end{tabular}
 \label{tab_slant}
@@ -158,9 +158,8 @@ Table~\ref{tab_slant}~Proportion of slanted parking slots.}
 倾斜式停车位在狭窄街道中广泛应用，可有效提升道路空间利用率，是现实场景中的常见车位类型。但与垂直车位相比，倾斜车位检测难度更大，且常被现有数据集忽视。为此，本文专门提高了倾斜车位在数据集中的比例。
 倾斜车位占比计算公式如下：
 \begin{equation}
- \mbox{倾斜车位比例} = \frac{\mbox{倾斜车位数}(S_{slant})}{\mbox{总车位数}(S_{Total})},
+ \mbox{倾斜车位比例}\alpha = \frac{\mbox{倾斜车位数}}{\mbox{总车位数}}.
 \end{equation}
-其中，$S$ 表示对应类型的停车位数量。
 
 从表 \ref{tab_slant} 可以看出，CRPS-D数据集的倾斜车位占比达 11.75\%，显著高于 ps2.0 的 3.41\%和 SNU 的 6.86\%。从训练集来看，CRPS-D 的倾斜车位占比为 11.97\%，是 ps2.0 的 3.59 倍，SNU的 1.79 倍；从测试集来看，CRPS-D 的倾斜车位占比为 10.71\%，是 ps2.0 的 2.86 倍，SNU的 1.45 倍。
 
@@ -196,7 +195,9 @@ SS-PSD 采用教师-学生双分支架构（如图 \ref{fig_sspsd} 所示），�
 （1）学生分支
 
 SS-PSD的学生分支和教师分支均采用编码器-解码器架构。编码器\(E_{\theta}^{S}\)处理有标签数据\(\textbf{x}_{l}\)和无标签数据\(\textbf{x}_{u}\)，生成潜在特征\(\textbf{z}_{l}\)和\(\textbf{z}_{u}\)。结合自适应VAT生成的对抗噪声\(\textbf{r}_{adv}\)，解码器\(D_{\theta}^{S}\)生成最终特征图：
-\[D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_{L}^{S} / \mathbb{R}_{U}^{S}\]
+\begin{equation}
+D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_{L}^{S} / \mathbb{R}_{U}^{S}.
+\end{equation}
 
 特征图\(\mathbb{R}\)对应图像中的标记点，通过模板匹配验证几何关系，判断是否构成有效停车位入口线。
 
@@ -275,18 +276,18 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 
 \begin{table}[!b]
 \centering
+\setlength{\tabcolsep}{4.5mm}
 \caption{不同标注比例下与开源SoTA方法对比（CPPS-D）\\
 Table~\ref{tab_crpsd}~Comparison with open-source SoTA methods under different label ratios (CPPS-D)}
-\begin{tabular}{lcccccc}
+\begin{tabular}{lccccc}
 \toprule
-Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  & 1/1 \\
+Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2 \\
 \midrule
-  标签数 & 1242  & 2484  & 3726 & 7452  & 14901  & 29803  \\
-  图片数 & 29803  & 29803  & 29803  & 29803  & 29803 & 29803 \\
+  标签数 & 1242  & 2484  & 3726 & 7452  & 14901  \\
 \midrule
-DMPR-PS$^{*}$\cite{huang2019dmpr}  & 52.70\% & 66.84\% & 70.28\% & 76.98\% & 83.23\% & 87.20\% \\
-GCN$^{*}$\cite{min2021attentional}   & 55.23\% & 63.32\% & 67.80\% & 72.57\% & 76.31\% & 79.44\% \\
-\textbf{Ours} & \textbf{71.72\%} & \textbf{79.75\%} & \textbf{81.03\%} & \textbf{83.78\%}  & \textbf{86.51\%} & \textbf{/} \\
+DMPR-PS$^{*}$\cite{huang2019dmpr}  & 52.70\% & 66.84\% & 70.28\% & 76.98\% & 83.23\% \\
+GCN$^{*}$\cite{min2021attentional}   & 55.23\% & 63.32\% & 67.80\% & 72.57\% & 76.31\%  \\
+Ours & \textbf{71.72\%} & \textbf{79.75\%} & \textbf{81.03\%} & \textbf{83.78\%}  & \textbf{86.51\%}  \\
 \bottomrule
 \end{tabular}
 \label{tab_crpsd}
@@ -297,31 +298,31 @@ GCN$^{*}$\cite{min2021attentional}   & 55.23\% & 63.32\% & 67.80\% & 72.57\% & 7
 
 \subsection{不同数据划分的结果}
 
-本文参照Mean Teacher\cite{tarvainen2017mean}方法，通过对数据集进行比例抽样来评估所提方法的性能。具体而言，将数据集划分为有标签集和无标签集，其中有标签集比例为\(1/n\)，无标签集比例为\((1 - \frac{1}{n})\)。对于CRPS-D数据集和公开数据集ps2.0，均采用\(1/24\)、\(1/12\)、\(1/8\)、\(1/4\)和\(1/2\)的有标签比例进行实验。由于 SS-PSD 是该领域首个半监督解决方案，因此只能与现有的公开全监督方案进行对比（DMPR-PS$^{*}$ 与 GCN$^{*}$，其中$^{*}$表示已使用 CRPS-D 数据集重新训练）。
+本文参照Mean Teacher\cite{tarvainen2017mean}方法，通过对数据集进行比例抽样来评估所提方法的性能。具体而言，将数据集划分为有标签集和无标签集，其中有标签集比例为\(1/n\)，无标签集比例为\((1 - \frac{1}{n})\)。对于CRPS-D数据集和公开数据集ps2.0，均采用\(1/24\)、\(1/12\)、\(1/8\)、\(1/4\)和\(1/2\)的有标签比例进行实验。由于 SS-PSD 是该领域首个半监督解决方案，因此只能与现有的公开全监督方案进行对比（DMPR-PS$^{*}$ 与 GCN$^{*}$，其中$^{*}$表示已使用 CRPS-D 数据集重新训练），评估指标选用更能体现模型效果的平均精度（\(AP\)）。
 
 （1）CRPS-D 实验结果分析
 
-从表 \ref{tab_crpsd} 可以看出，在 CRPS-D 数据集上，本文方法在不同标注比例下均显著优于现有全监督方法：在标注比例为\(1/24\)（仅 1242 张标注图像）时，本文方法的平均精度（\(AP\)）达到 71.72\%，较 DMPR-PS\cite{huang2019dmpr} 提升了 19.02 个百分点，较 GCN 提升了 16.49 个百分点，展现了在标注数据极度稀缺情况下的优越性能；在标注比例为\(1/12\)和\(1/8\)时，本文方法分别达到 79.75\% 和 81.03\% 的\(AP\)，较基线方法提升了 6-12 个百分点，表明随着标注数据的增加，本文方法仍能保持显著优势；即使在标注比例为\(1/4\)和\(1/2\)时，本文方法依然能够维持性能领先，分别达到 83.78\% 和 86.51\% 的\(AP\)。
+从表 \ref{tab_crpsd} 可以看出，在 CRPS-D 数据集上（训练集共 29803 张图像），本文方法在不同标注比例下均显著优于现有全监督方法：在标注比例为\(1/24\)（仅 1242 张标注图像）时，本文方法的\(AP\)达到了 71.72\%，较 DMPR-PS\cite{huang2019dmpr} 提升了 19.02 个百分点，较 GCN 提升了 16.49 个百分点，展现了在标注数据极度稀缺情况下的优越性能；在标注比例为\(1/12\)和\(1/8\)时，本文方法分别达到 79.75\% 和 81.03\% 的\(AP\)，较基线方法提升了 6-12 个百分点，表明随着标注数据的增加，本文方法仍能保持显著优势；即使在标注比例为\(1/4\)和\(1/2\)时，本文方法依然能够维持性能领先，分别达到 83.78\% 和 86.51\% 的\(AP\)。
 
 
 （2）ps2.0 实验结果分析
 
-从表 \ref{tab_ps2} 可以看出，在ps2.0数据集上，本文方法同样展现出强大的性能：在标注比例为\(1/24\)时，本文方法的\(AP\)达到 80.44\%，较 DMPR-PS 提升了 19.49 个百分点，较GCN提升了 3.74 个百分点；在标注比例为\(1/12\)和\(1/8\)时，本文方法分别达到 90.47\% 和 94.52\% 的\(AP\)，较基线方法提升了 4-12 个百分点；在标注比例为\(1/4\)和\(1/2\)时，本文方法的性能进一步提升至 96.10\% 和 97.79\% ，接近全监督方法在完整数据集上的性能水平。
+从表 \ref{tab_ps2} 可以看出，在ps2.0数据集上（训练集共 9827 张图像），本文方法同样展现出强大的性能：在标注比例为\(1/24\)时，本文方法的\(AP\)达到 80.44\%，较 DMPR-PS 提升了 19.49 个百分点，较GCN提升了 3.74 个百分点；在标注比例为\(1/12\)和\(1/8\)时，本文方法分别达到 90.47\% 和 94.52\% 的\(AP\)，较基线方法提升了 4-12 个百分点；在标注比例为\(1/4\)和\(1/2\)时，本文方法的性能进一步提升至 96.10\% 和 97.79\% ，已接近全监督方法在完整数据集上的性能水平（DMPR-PS$^{*}$：98.64\%，GCN$^{*}$：98.31\%）。
 
 \begin{table}[!h]
 \centering
+\setlength{\tabcolsep}{4.5mm}
 \caption{不同标注比例下与开源SoTA方法对比（ps2.0）\\
 Table~\ref{tab_ps2}~Comparison with open-source SoTA methods under different label ratios (ps2.0)}
-\begin{tabular}{lcccccc}
+\begin{tabular}{lccccc}
 \toprule
-Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  & 1/1 \\
+Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  \\
 \midrule
-  标签数 & 410  & 819  & 1230 & 2457  & 4913  & 9827  \\
-  图片数 & 9827  & 9827  & 9827  & 9827  & 9827  & 9827  \\
+  标签数 & 410  & 819  & 1230 & 2457  & 4913  \\
 \midrule
-    DMPR-PS$^{*}$\cite{huang2019dmpr}  & 60.95\% & 78.05\% & 87.28\% & 93.70\% & 96.47\% & 98.64\% \\
-    GCN$^{*}$\cite{min2021attentional}  & 76.70\% & 85.72\% & 92.78\% & 95.47\% & 97.45\% & 98.31\% \\
-    \textbf{Ours} & \textbf{80.44\%} & \textbf{90.47\%} & \textbf{94.52\%}  & \textbf{96.10\%} & \textbf{97.79\%} & \textbf{/} \\
+    DMPR-PS$^{*}$\cite{huang2019dmpr}  & 60.95\% & 78.05\% & 87.28\% & 93.70\% & 96.47\% \\
+    GCN$^{*}$\cite{min2021attentional}  & 76.70\% & 85.72\% & 92.78\% & 95.47\% & 97.45\% \\
+    Ours & \textbf{80.44\%} & \textbf{90.47\%} & \textbf{94.52\%}  & \textbf{96.10\%} & \textbf{97.79\%} \\
 \bottomrule
 \end{tabular}
 \label{tab_ps2}
@@ -353,24 +354,24 @@ Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  & 1/1 \\
 
 \begin{table}[ht]
 \centering
-\setlength{\tabcolsep}{3mm}
+\setlength{\tabcolsep}{6mm}
 \caption{与近期方法的比较结果 \\
 Table~\ref{tab_recent}~Comparison results with recent methods.}
-\begin{tabular}{lccccc}
+\begin{tabular}{lcccc}
 \toprule
-    方法 & 标签数 & 图像数 &  Precision & Recall & F1 \\
+    方法 & 标签数 &  Precision & Recall & F1 \\
 \midrule
-    SAM-PS\cite{zhai2024sam} & 0 & 9827 & 94.29\% & 81.35\% & 87.34\% \\
-    \textbf{Ours (1/12)} & \textbf{819} & 9827 & \textbf{95.45\%} & \textbf{91.30\%} & \textbf{93.34\%} \\
+    SAM-PS\cite{zhai2024sam} & 0  & 94.29\% & 81.35\% & 87.34\% \\
+    Ours (1/12) & 819  & \textbf{95.45\%} & \textbf{91.30\%} & \textbf{93.34\%} \\
 \midrule
-       DeepPS\cite{zhang2018vision}  & 9827 & 9827 & 98.99\% & 99.13\% & 99.06\% \\
-       DMPR-PS\cite{huang2019dmpr} & 9827 & 9827 & 99.42\% & 99.37\% & 99.39\% \\
-       VPS\cite{li2020vacant}  & 9827 & 9827 & 99.63\% & 99.10\% & 99.36\% \\
-       GCN\cite{min2021attentional}  & 9827 & 9827 & 99.56\% & 99.42\% & 99.49\%\\
-       SCCN \cite{zheng2022center}  & 9827 & 9827 & 99.35\% & 99.17\% & 99.26\% \\
-       Bui et al.\cite{bui2023one} & 9827 & 9827 &  99.63\% & 99.63\% & 99.63\% \\
-       BEV-PolyNet\cite{duan2025bev} & 9827 & 9827 &  99.82\% & 99.65\% & 99.73\% \\
-       \textbf{Ours (1/2)} & \textbf{4913}  & 9827 & 98.64\% & 98.07\% & 98.35\%\\
+       DeepPS\cite{zhang2018vision}  & 9827  & 98.99\% & 99.13\% & 99.06\% \\
+       DMPR-PS\cite{huang2019dmpr} & 9827  & 99.42\% & 99.37\% & 99.39\% \\
+       VPS\cite{li2020vacant}  & 9827  & 99.63\% & 99.10\% & 99.36\% \\
+       GCN\cite{min2021attentional}  & 9827  & 99.56\% & 99.42\% & 99.49\%\\
+       SCCN \cite{zheng2022center}  & 9827  & 99.35\% & 99.17\% & 99.26\% \\
+       Bui et al.\cite{bui2023one} & 9827  &  99.63\% & 99.63\% & 99.63\% \\
+       BEV-PolyNet\cite{duan2025bev} & 9827  &  99.82\% & 99.65\% & 99.73\% \\
+       Ours (1/2) & 4913   & 98.64\% & 98.07\% & 98.35\%\\
 \bottomrule
 \end{tabular}
 \label{tab_recent}
@@ -400,9 +401,9 @@ Table~\ref{tab_recent}~Comparison results with recent methods.}
 
 
 \subsection{消融实验}
-本节旨在探究置信度引导掩码（CGM）一致性和自适应特征扰动（Adaptive-VAT）对所提方法性能的影响。所有实验均基于 CRPS-D 数据集，使用标注数据比例设定为 1/12。各组件的具体贡献详见表 \ref{tab_ab}，该表同时展示了标记点（$AP_{marking-point}$）和停车位的检测结果（$AP_{parking-slot}$）。
+本节旨在探究置信度引导掩码（CGM）一致性和自适应特征扰动（Adaptive-VAT）对所提方法性能的影响。所有实验均基于 CRPS-D 数据集，使用标注数据比例设定为 1/12。各组件的具体贡献详见表 \ref{tab_ab}，该表同时展示了标记点检测平均精度（$AP_{marking-point}$）和停车位检测平均精度（$AP_{parking-slot}$）。
 
-实验结果表明，相较于仅采用均方误差（MSE）损失的半监督基线 MT 方法，CGM 一致性约束使停车位检测平均精度提升了 3.6 个百分点，而 Adaptive-VAT 的引入进一步将性能提高了 0.82 个百分点。
+实验结果表明，相较于仅采用均方误差（MSE）损失的半监督基线 MT 方法，CGM 一致性约束使得$AP_{parking-slot}$提升了 3.6 个百分点，而 Adaptive-VAT 的引入进一步将$AP_{parking-slot}$提高了 0.82 个百分点。
 
 \begin{table}[!h]
 \centering
@@ -427,23 +428,23 @@ Table~\ref{tab_ab}~Ablation study using the 1/12 labeled ratio}
 
 通过逐步去除 CGM 一致性的关键组件，本节深入剖析了其对性能的影响。具体而言，首先去除掩码组件得到 CG 一致性，接着去除置信度权重得到 C 一致性。从 表\ref{tab_ablation} 可以看出：
 仅采用 C 一致性（对所有单元格施加相同约束）时，性能表现较差，停车位检测平均精度仅为 54.88\%；
-引入置信度权重（CG 一致性）后，性能得到显著提升，停车位检测平均精度达到78.22\%；
-进一步加入掩码处理（CGM 一致性），性能进一步提升至 78.93\%，较 CG 一致性提升了 0.71 个百分点。
+引入置信度权重（CG 一致性）后，性能得到显著提升，$AP_{parking-slot}$达到78.22\%；
+进一步加入掩码处理（CGM 一致性），$AP_{parking-slot}$进一步提升至 78.93\%，较 CG 一致性提升了 0.71 个百分点。
 
 （2）Adaptive-VAT
 
 若去除 Adaptive-VAT 的自适应性，其性能会降至传统的 S-VAT\cite{tarvainen2017mean}或 T-VAT\cite{liu2022perturbed}水平。表 \ref{tab_ablation} 的结果显示：
-S-VAT 的停车位检测平均精度为 78.87\%，T-VAT 略高，达到 79.53\%。
-应用 Adaptive-VAT 后，性能进一步提升至 79.75\%，展现出其在 S-VAT 和 T-VAT 之间自适应选择更优策略的能力。
+使用S-VAT 的$AP_{parking-slot}$为 78.87\%，T-VAT 略高，达到 79.53\%。
+应用 Adaptive-VAT 后，$AP_{parking-slot}$进一步提升至 79.75\%，展现出其在 S-VAT 和 T-VAT 之间自适应选择更优策略的能力。
 
 \begin{table}[!h]
 \centering
 \caption{对CGM 一致性和Adaptive-VAT的消融实验 \\
 Table~\ref{tab_ablation}~Ablation study of various components on CGM Consistency and Adaptive-VAT}
-\setlength{\tabcolsep}{8.0mm}
+\setlength{\tabcolsep}{10mm}
 \begin{tabular}{lcc}
 \toprule
-  Methods &  $AP_{marking-point}$ & $AP_{parking-slot}$ \\
+   &  $AP_{marking-point}$ & $AP_{parking-slot}$ \\
 \midrule
       C 一致性 &   60.07\% & 54.88\% \\
       CG 一致性 &   80.75\% & 78.22\% \\
@@ -465,11 +466,12 @@ Table~\ref{tab_ablation}~Ablation study of various components on CGM Consistency
 
 \begin{table}[!h]
 \centering
+\setlength{\tabcolsep}{8mm}
 \caption{不同置信度阈值的实验结果\\
 Table~\ref{tab_confidence}~Results of different confidence thresholds.}
     \begin{tabular}{cccc}
     \toprule
-    Threshold ($\tau$) & $AP_{marking-point}$ & $AP_{parking-slot}$ & Epochs\\
+    Threshold ($\tau$) & $AP_{marking-point}$ & $AP_{parking-slot}$ & 训练轮数\\
     \midrule
     0.1 & 81.12\% & 78.81\%	& 36 \\
     0.2	& 81.59\%	& 79.47\%	& 22 \\
@@ -489,6 +491,7 @@ Table~\ref{tab_confidence}~Results of different confidence thresholds.}
 
 \begin{table}[!h]
 \centering
+\setlength{\tabcolsep}{4mm}
 \caption{不同干扰强度的实验结果\\
 Table~\ref{tab_eps}~Results of different disturbance intensities}
 \begin{tabular}{ccccccc}
@@ -513,13 +516,13 @@ Table~\ref{tab_eps}~Results of different disturbance intensities}
 
 \begin{table}[!h]
 \centering
+\setlength{\tabcolsep}{6mm}
 \caption{分场景子测试集的实验结果\\
 Table~\ref{tab_test}~Evaluation results on the sub-test sets}
-\setlength{\tabcolsep}{5.0mm}
 \begin{tabular}{lcccc}
 \toprule
- \multicolumn{2}{c}{} & \multicolumn{2}{c}{$AP_{parking-slot}\uparrow$} \\ \cmidrule{3-4}%
-   \multirow{-2}{*}{场景子集} & \multirow{-2}{*}{图像数} & DMPR-PS$^{*}$ & \textbf{Ours} & \multirow{-2}{*}{提升} \\
+ \multicolumn{2}{c}{} & \multicolumn{2}{c}{$AP_{parking-slot}$} \\ \cmidrule{3-4}%
+   \multirow{-2}{*}{场景子集} & \multirow{-2}{*}{图像数} & DMPR-PS$^{*}$ & Ours & \multirow{-2}{*}{提升} \\
 \midrule
       室内弱光 & 545  & 74.15\% & 86.68\% & 12.53\%\\
       室内强光 & 786  & 70.00\% & 84.80\% & 14.80\%\\
@@ -548,7 +551,6 @@ Table~\ref{tab_test}~Evaluation results on the sub-test sets}
 \section{本章小结}
 
 本章针对复杂真实场景中停车位检测任务面临的数据规模受限以及标注成本高昂问题，从数据构建与学习范式两个层面展开研究。构建了大规模停车位数据集 CRPS-D，覆盖多光照、多视角、多停车形式及多种天气条件，包含丰富的场景变化和复杂实例，为后续方法研究提供了统一、具有挑战性的数据基础。提出了面向停车位检测任务的半监督检测框架 SS-PSD，基于教师-学生学习范式，通过 CGM 一致性约束和自适应 VAT 扰动，有效利用未标注数据，显著提升了模型的泛化能力与鲁棒性。
-
 实验结果表明，SS-PSD 在不同标注比例下均显著优于现有全监督方法，特别是在标注数据极度稀缺的情况下性能提升更为明显。该方法在不同场景下均展现出良好的适应性，尤其在长尾分布场景（如夜晚）中表现突出，大幅缓解了数据不平衡问题。本章工作通过构建大规模数据集和提出半监督学习框架，有效缓解了停车位检测在复杂场景下的训练瓶颈，为后续基于单帧与多帧建模的检测方法奠定了坚实的数据与训练基础，同时也为解决其他视觉任务中的数据标注瓶颈提供了新的思路。
 
 
