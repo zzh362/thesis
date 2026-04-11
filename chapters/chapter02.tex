@@ -1,556 +1,93 @@
-\setlength{\baselineskip}{20pt}
-\chapter{大规模停车位数据集构建与半监督检测框架}
-\label{cha:chap2}
+ \setlength{\baselineskip}{20pt}
+\chapter{相关理论}
+\label{cha:chap3}
+本章介绍停车位检测领域通用框架，以及现有公开数据集和相关评价指标，为后续研究提供理论基础。
 
-\section{研究动机}
-自动泊车技术作为自动驾驶领域的关键组成部分，其性能直接影响驾驶安全性与便利性。停车位检测作为自动泊车系统的感知起点，是实现准确泊车规划的前提。环视摄像头系统因能提供车辆周围环境的全景鸟瞰图，已成为停车位检测的主流传感器方案。传统停车位检测方法依赖手工设计的几何特征（如拐角、线条等），在复杂场景下精度有限，尤其在几何特征不明显的区域表现不佳。
+\section{停车位检测通用框架}
 
-随着深度学习技术的发展，基于学习的停车位检测方法已逐步取代传统方法。DeepPS\cite{zhang2018vision}及其配套数据集ps2.0的出现，标志着该领域正式进入深度学习时代。后续研究通过标记点回归\cite{huang2019dmpr}、图神经网络\cite{min2021attentional}和Transformer\cite{bui2023transformer}等技术，不断提升检测精度，在ps2.0数据集上已达到99\%以上的查准率。然而，真实停车场景的复杂性远超基准数据集，现有方法在实际应用中往往难以复现实验室性能。因此，构建更贴近真实场景、规模更大、挑战性更强的数据集，成为推动该领域发展的关键。
+如图 \ref{fig_pip1} 所示，停车位检测的典型流程通常包括以下几个关键环节：首先，输入图像一般是由全景环视系统（AVM）生成的环视图，或是由鱼眼摄像头直接捕捉的鱼眼图像。在将这些图像送入特征提取骨干网络之前，需要对其进行预处理，包括尺寸调整、以及翻转、添加噪声等数据增强操作，这些步骤有助于提升模型对不同场景的鲁棒性。
 
-为此，本文构建了大规模真实场景停车位数据集CRPS-D\cite{zhang2025advancing}，涵盖地上停车场、地下停车库、路边停车区等多种场景，覆盖白天、黑夜、晴天、阴天、雨天等多种天气与光照条件。该数据集规模远超现有公开数据集（如ps2.0\cite{zhang2018vision}和SNU\cite{do2020context}），且具有更高的车位密度、更多的斜向车位样本和更复杂的道路场景，为复杂场景下的停车位检测研究提供了统一的评估基准。
+特征提取模块在停车位检测中扮演着核心角色，负责从输入图像中提取从低级到高级的特征表示。其中，低级特征主要包括角点或颜色信息，用于捕捉停车位的局部细节；而高级特征则代表更抽象的语义信息，如停车位的整体形状、尺寸及排列布局等。
 
-另一方面，停车位检测方法的性能高度依赖训练数据的规模与多样性。但停车位作为结构化目标，其标注需要标记多个关键点及结构关系，成本高昂、周期长，导致现有数据集在规模和场景覆盖上存在明显不足。这使得全监督学习方法在面对复杂光照、视角变化和非标准停车位时，泛化能力受限。
+提取出的特征随后会被传递至检测、分类或分割模块，以生成最终的预测结果。这些预测结果可以采取多种形式，例如标线点的精确坐标、停车位的区域边界，或是代表车位边界的分割掩码。为了进一步优化预测输出，系统通常会利用预定义的几何规则或模板匹配技术进行后处理，确保预测结果符合停车位的预期几何特征，提高检测的准确性。
 
-对于这一数据标注瓶颈，半监督学习为停车位检测提供了新的解决思路。半监督学习通过利用未标注数据辅助训练，可有效降低对人工标注的依赖，已在目标检测等任务中展现出良好潜力。然而，停车位检测的结构化特性和关键点稀疏分布，给半监督学习带来独特挑战：如何在保证结构一致性的同时有效利用未标注数据，尚缺乏系统性研究。
 
-针对这一问题，本文提出了首个停车位检测半监督学习范式。该范式基于教师-学生框架（Teacher-Student\cite{tarvainen2017mean}），融合了置信度引导掩码（CGM）一致性约束和自适应特征扰动机制（Adaptive-VAT）。其中，教师模型通过学生模型参数的指数移动平均（EMA\cite{tarvainen2017mean}）生成，利用一致性正则化引导学生模型学习。为避免强制错误预测保持一致的问题，本文引入可训练的置信度图为不同区域分配权重，并对低置信度区域进行掩码处理，构建置信度引导的掩码一致性约束。此外，为增强学生模型的鲁棒性，本文设计了 Adaptive-VAT 自适应特征扰动机制，根据教师与学生模型对扰动的鲁棒性，选择性生成更具挑战性的对抗噪声，促进学生模型学习更稳定的特征表示。
-
-综上，本章从数据构建与学习范式两方面展开研究：
-
-（1）构建了 CRPS-D 大规模停车位数据集，覆盖多光照、多场景和多停车形式，为复杂场景下的停车位检测研究提供统一数据基础。该数据集是目前规模最大的真实世界停车位检测基准，以其更大的数据规模、更密集的实例和更具挑战性的场景，推动该领域向实际应用场景迈进。
-
-（2）设计了面向停车位检测的半监督检测框架 SS-PSD，通过教师-学生学习范式挖掘未标注数据的潜在信息，为后续结构感知与时序建模方法的研究奠定基础。 
-
-\begin{figure}[!b]
-\centering
-\includegraphics[width=1\textwidth]{figures/chp2/pdf/equip.pdf}
-\caption{360度全景环视系统 \\Fig~\ref{fig_equip}~360-degree surround view system}
-\label{fig_equip}
+\begin{figure}[!h] % use float package if you want it here
+%\setlength{\abovecaptionskip}{-0.2cm} %调整图片caption与正文之间的间距，table同理。可自己调整。
+  \centering
+  \includegraphics[width=1\linewidth]{figures/chp1/pipline.png}
+  \caption{停车位检测的通用框架\cite{wong2023review} \\Fig~\ref{fig_pip1}~General Flow for Parking Slot Detection\cite{wong2023review}}
+  \label{fig_pip1}
 \end{figure}
 
-\section{大规模停车位数据集CRPS-D}
+\section{公开数据集}
+（1）ps2.0数据集
 
-\subsection{基本信息}
-
-CRPS-D数据集包含 35379 张图像，其中训练集 29803 张，测试集 5936 张。每张图像均标注了停车位标线点及完整车位信息：标线点通过坐标、形状、类型和角度等特征表征，车位则由标线点对的结构关系确定。数据采集使用安装在侧后视镜的鱼眼摄像头，通过环视系统拼接为鸟瞰图，每张 $512\times512$ 分辨率的图像覆盖 $10m\times10m$ 区域。图 \ref{fig_equip} 展示了数据采集设备，其中左侧为主处理单元及四路鱼眼摄像头，右侧为拍摄视野（FOV）的可视化效果。
-
-% 为确保评估公平性，数据集采用严格的训练/测试划分策略：基于停车场标识、停车区域和采集时段进行分类，确保同一物理地点的图像不会同时出现在训练集和测试集中。对于视频序列数据，采用较大时间间隔抽帧，避免引入近乎重复的样本，保证测试集的独立性与代表性。 
+ps2.0数据集由同济大学的Zhang等人\cite{zhang2018vision}提出，是目前车位检测领域使用最为广泛的数据集。该数据集包含 9827 张训练图像和 2338 张测试图像，分辨率为 $600 \times 600$ 像素，通过对四路鱼眼摄像头获取的图像进行拼接生成 BEV 表征。该数据集包含室外和室内场景，以及三种基本车位类型（垂直、平行、倾斜车位）。由于发布时间较早且数据量相对充足，该数据集被广泛用于车位检测方法的评估与基准测试。然而，该数据集也存在一定局限性：场景覆盖范围有限，主要集中在单一类型的停车场环境，缺乏地上停车场、路边停车区等多样化场景；数据采集条件较为理想，未充分考虑黑夜、雨天等复杂天气与光照条件；数据规模相对较小，车位密度和斜向车位样本不足，难以支撑复杂场景下的模型训练。这些不足限制了现有方法在真实复杂场景中的泛化能力，也为本文构建更具挑战性的数据集提供了明确方向。
 
 
-\subsection{定量分析}
-本节通过详细的数据分析，展示 CRPS-D 数据集相较于现有公开数据集的优势与改进。
+（2）PSV数据集
 
-（1）数据规模
+PSV 数据集由Wu等人\cite{wu2018vh}提出，研究团队通过同济大学智能电动车（TiEV）平台在同济大学嘉定校区的道路环境下采集而成。该数据集包含 2550 张训练图像、425 张验证图像以及 1274 张测试图像，所有图像分辨率均为$640 \times 480$像素。与 ps2.0 类似，该数据集的图像同样通过四路鱼眼摄像头采集，并经过拼接处理生成鸟瞰图。起初，该数据集主要针对图像分割方法的训练而设计，后续研究人员通过添加针对目标检测的标注格式，使其也可用于训练目标检测模型，进一步扩展了其应用范围。
 
-数据规模是现代视觉模型（如SAM\cite{kirillov2023segment}）具有较高性能的关键因素，也是本文构建大规模数据集的核心动机。从表 \ref{tab_datascale} 可以看出，CRPS-D 在图像数量和车位总数上均实现了显著提升：图像总数达 35739 张，分别是 ps2.0 的 2.94 倍和SNU的 1.57 倍；总车位数达 142081 个，约为 ps2.0 的 12.2 倍、SNU的 2.28 倍，为深度神经网络提供了更丰富的学习样本。
-从训练数据分布来看，CRPS-D 的训练集包含 29803 张图像，是 ps2.0 训练集的 3.03 倍，SNU 训练集的 1.63 倍；训练集中的车位数达 118057 个，是ps2.0的 12.46 倍，SNU 的 2.42 倍。从测试数据来看，CRPS-D 的测试集包含 5936 张图像，是 ps2.0 测试集的 2.54 倍，SNU测试集的 1.31 倍；测试集中的车位数达 24024 个，是 ps2.0 的 11.08 倍，SNU的 1.77 倍。
+（3）SNU 数据集 
 
-\begin{table}[!t]
-\centering
-\setlength{\tabcolsep}{4.0mm}
-\caption{数据规模对比表 \\Table~\ref{tab_datascale}~Comparison results of data scale}
-\begin{tabular}{llccc}
-        \toprule
-         数据集  & & ps2.0\cite{zhang2018vision} & SNU\cite{do2020context} & Ours \\
-        \midrule
-             \multirow{3}{*}{总图像数} & 训练集 & 9827 & 18299 & 29803  \\
-              & 测试集 & 2338 &	4518	&5936   \\
-              & 总数 & 12165	& 22817	& \textbf{35739}  \\
-        \midrule
-            \multirow{3}{*}{训练集中的车位数}  & 垂直车位 & 9160 & 45610 & 103931  \\
-              & 倾斜车位 & 316 &	3276 & 14126   \\
-              & 总数 & 9476 & 48886 & \textbf{118057}  \\
-        \midrule
-             \multirow{3}{*}{测试集中的车位数}   & 垂直车位 & 2087 & 12541 & 21451 \\
-              & 倾斜车位 & 81 & 1004 & 2573  \\
-              & 总数 & 2168 & 13545 & \textbf{24024}   \\
-        \midrule
-             总车位数  & 总数 & 11644 & 62431 & \textbf{142081} \\
-        \bottomrule
-    \end{tabular}
-\label{tab_datascale}
-\end{table} 
+SNU 数据集由首尔大学 Do和Choi\cite{do2020context}发布，包含 18299 张训练图像和 4518 张测试图像，分辨率均为$768 \times 256$像素。该数据集旨在提供更丰富的场景和多样化的车位类型，作为 ps2.0 数据集的优选替代方案。在数据采集过程中，研究团队将鱼眼摄像头安装在车辆侧面，采集到的图像未进行拼接处理，允许检测算法直接处理单个摄像头的原始图像，无需进行复杂的图像拼接操作。SNU 数据集是 ps2.0 的一种替代方案，但其在停车位检测研究中的应用仍相对有限。
 
-除了数据规模外，数据密度也是衡量数据集质量的重要指标。为更准确地衡量数据集的信息密度，本文定义了车位-图像密度指标：
-\begin{equation}
- \mbox{车位-图像密度}\rho = \frac{\mbox{总车位数}}{\mbox{总图像数}}.
-\end{equation}
-
-如表 \ref{tab_density} 所示，CRPS-D 的车位-图像密度高达 3.98，远高于 ps2.0 的 0.96 和 SNU 的 2.74。从训练集密度来看，CRPS-D 的密度为 3.96，是ps2.0 的 4.13 倍，SNU 的 1.48 倍；从测试集密度来看，CRPS-D 的密度为 4.05，是 ps2.0 的 4.35 倍，SNU的 1.35 倍。
-
-这种高密度特性意味着CRPS-D包含更复杂的空间上下文和更多重叠遮挡场景，能够促使模型学习更鲁棒的特征表示，而非简单的模板匹配，为训练高泛化能力的深度感知网络奠定了坚实基础。同时，大规模数据也为半监督学习提供了充足的标注样本，有助于更有效地利用未标注数据提升模型性能。
-
-\begin{table}[!t]
-\centering
-\caption{车位图像密度 \\Table~\ref{tab_density}~Density of parking slots }
-\begin{tabular}{lccccccccc}
-\toprule
- & \multicolumn{3}{c}{ps2.0\cite{zhang2018vision}} & \multicolumn{3}{c}{SNU\cite{do2020context}} & \multicolumn{3}{c}{Ours} \\\cmidrule{2-4}\cmidrule{5-7}\cmidrule{8-10}%
- 
-    & 车位数 & 图像数 & $\rho$ & 车位数 & 图像数 & $\rho$ & 车位数 & 图像数 & $\rho$ \\
-\midrule
-     训练集 & 9476 & 9827 & 0.96 & 48886 & 18299 & 2.67 & 118057 & 29803 & \textbf{3.96}  \\
-    测试集 & 2168 & 2338 & 0.93 & 13545 & 4518 & 3.00 & 24024 & 5936 & \textbf{4.05}  \\
-    总数 & 11644 & 12165 & 0.96 & 62431 & 22817 & 2.74 & 142081 & 35739 & \textbf{3.98}  \\
-\bottomrule
-\end{tabular}
-\label{tab_density}
-\end{table} 
-
-
-\begin{table}[!t]
-\centering
-\setlength{\tabcolsep}{1.0mm}
-\caption{测试集场景统计信息\\
-Table~\ref{tab_sence}~Statistics for the scene data in the test set.}
-\begin{tabular}{lccccccccc}
-    \toprule
-    \multirow{2}{*}{场景} & \multicolumn{2}{c}{室内} & \multicolumn{4}{c}{室外} & \multicolumn{2}{c}{特殊场景} & \multirow{2}{*}{总计} \\
-    \cmidrule(lr){2-3} \cmidrule(lr){4-7} \cmidrule(lr){8-9}
-    & 弱光 & 强光 & 正常日光 & 雨天 & 阴影 & 夜晚 & 倾斜车位 & 受损车位 & \\
-    \midrule
-    ps2.0\cite{zhang2018vision} & \multicolumn{2}{c}{226} & 693 & 244 & 1127 & / & 48 & / & 2338 \\
-    Ours & 545 & 786 & 1703 & 323 & 1389 & 86 & 802 & 302 & 5936 \\
-    \bottomrule
-\end{tabular}
-\label{tab_sence}
-\end{table}
-
-
-（2）场景分析
-
-为全面覆盖真实世界的复杂泊车环境，CRPS-D 数据集细分为八个场景子集，包括室内弱光、室内强光、室外正常日光、室外雨天、室外阴影、室外夜晚、倾斜车位和受损车位等多样化场景。
-从表 \ref{tab_sence} 可以看出，CRPS-D 在场景覆盖广度上实现了显著突破：不仅新增了室外夜晚和受损车位等挑战性场景，填补了现有数据集在极端条件下的空白，还在各细分场景的样本数量上实现了量级提升。
-这种多样化的场景覆盖和充足的样本数量，使得 CRPS-D 能够更全面地模拟真实世界的泊车环境，为模型训练提供更丰富的场景变体，有助于提升模型在复杂场景下的鲁棒性。
-图 \ref{fig_crpsd} 展示了各场景的示例图像，直观体现了 CRPS-D 更贴近真实泊车场景的特点。
-
-
-
-\begin{figure}[!t]
-\centering
-\includegraphics[width=1\textwidth]{figures/chp2/pdf/sence.pdf}
-\caption{数据集示例图片 \\Fig~\ref{fig_crpsd}~Example images from the dataset}
-\label{fig_crpsd}
+\begin{figure}[!h] % use float package if you want it here
+%\setlength{\abovecaptionskip}{-0.2cm} %调整图片caption与正文之间的间距，table同理。可自己调整。
+  \centering
+  \includegraphics[width=1\linewidth]{figures/chp1/datasets.png}
+  \caption{数据集使用分布情况\cite{wong2023review} \\Fig~\ref{fig_dataset}~Dataset Distribution\cite{wong2023review}}
+  \label{fig_dataset}
 \end{figure}
 
-\begin{table}[!b]
-\centering
-\setlength{\tabcolsep}{0.8mm}
-\caption{倾斜停车位占比 \\
-Table~\ref{tab_slant}~Proportion of slanted parking slots.}
-\begin{tabular}{lccccccccc}
-\toprule
- & \multicolumn{3}{c}{ps2.0\cite{zhang2018vision}} & \multicolumn{3}{c}{SNU\cite{do2020context}} & \multicolumn{3}{c}{Ours} \\\cmidrule{2-4}\cmidrule{5-7}\cmidrule{8-10}%
- 
-    & 倾斜车位 & 总车位 & $\alpha$ & 倾斜车位 &总车位 & $\alpha$
-    & 倾斜车位 & 总车位 & $\alpha$ \\
-\midrule
-    训练集 & 316 & 9476 & 3.33\% & 3276 & 48886 & 6.70\% & 14126 & 118057 & \textbf{11.97\%}  \\
-    测试集 & 81 & 2168 & 3.74\% & 1004 & 13545 & 7.41\% & 2573 & 24024 & \textbf{10.71\%}  \\
-    总数 & 397 & 11644 & 3.41\% & 4280 & 62431 & 6.86\% & 16699 & 142081 & \textbf{11.75\%}  \\
-\bottomrule
-\end{tabular}
-\label{tab_slant}
-\end{table} 
+图 \ref{fig_dataset}（a）展示了所综述作品中数据集的使用分布情况。从图中可以观察到，大多数研究（共17项）选择利用 ps2.0数据集 来评估其方法，这进一步印证了 ps2.0 在车位检测领域的主导地位。此外，有6项研究采用了自行采集且未公开的数据集（标注为“其他”），这些数据集通常针对特定场景或需求进行采集，具有一定的针对性。而2020年发布的 SNU 数据集在方法评估中的使用相对有限。
+图 \ref{fig_dataset}（b）描绘了关于所使用数据集数量的评估策略。统计结果显示，多数研究（73\%）依赖单一数据集来评估其算法。然而，有27\%的研究在评估中采用了两个数据集，包括将一个公开数据集与另一个自标注数据集相结合，或是同时利用两个公开数据集。采用多个数据集进行评估代表了一种更有前景的研究方向，因为它能够更全面地验证方法在不同场景、不同数据分布下的泛化能力，提高评估结果的可靠性。
 
-（3）倾斜车位
+\section{模型评估指标}
 
-倾斜式停车位在狭窄街道中广泛应用，可有效提升道路空间利用率，是现实场景中的常见车位类型。但与垂直车位相比，倾斜车位检测难度更大，且常被现有数据集忽视。为此，本文专门提高了倾斜车位在数据集中的比例。
-倾斜车位占比计算公式如下：
+在停车位检测研究中，传统评估指标多采用查准率（Precision）和查全率（Recall）。然而，这两个指标对阈值选择较为敏感，不同的阈值设置可能会对评估结果产生显著影响，从而降低评估的可靠性。为了提供更全面、更稳定的评估，本文采用平均精度（Average Precision, AP）作为主要评估指标，具体应用\textit{PASCAL VOC 2010}中的全点插值方法，其计算方式如下：
+
 \begin{equation}
- \mbox{倾斜车位比例}\alpha = \frac{\mbox{倾斜车位数}}{\mbox{总车位数}}.
+AP = \sum \Big((Recall_{j+1}-Recall_{j}) \times Precision_{j+1} \Big),
+\end{equation}
+其中 $j$ 是满足 $Recall_{j} \neq Recall_{j+1}$ 的索引。
+
+查准率和查全率的计算公式如下：
+
+\begin{equation}
+Precision = \frac{TP}{TP + FP},
 \end{equation}
 
-从表 \ref{tab_slant} 可以看出，CRPS-D数据集的倾斜车位占比达 11.75\%，显著高于 ps2.0 的 3.41\%和 SNU 的 6.86\%。从训练集来看，CRPS-D 的倾斜车位占比为 11.97\%，是 ps2.0 的 3.59 倍，SNU的 1.79 倍；从测试集来看，CRPS-D 的倾斜车位占比为 10.71\%，是 ps2.0 的 2.86 倍，SNU的 1.45 倍。
-
-这一比例更真实地反映了现实世界的车位分布，同时有助于缓解类别不平衡问题，提升模型对倾斜车位的检测能力，使模型在处理真实场景时表现更加稳定可靠。
-
-
-
-
-\section{半监督停车位检测算法框架}
-
-本节详细阐述SS-PSD（Semi-Supervised Parking Slot Detection）架构及其半监督学习策略。如图 \ref{fig_sspsd}所示，该架构由两个分支组成：学习分支（学生模型）负责模型训练，指导分支（教师模型）通过指数移动平均（EMA）更新参数。图中左下和右下部分分别对应 \textbf{Adaptive-VAT}自适应特征扰动 和 \textbf{CGM} 一致性约束模块。 
-
-\begin{figure}[!h]
-\centering
-\includegraphics[width=1\textwidth]{figures/chp2/pdf/pipline.pdf}
-\caption{SS-PSD的整体架构\\Fig~\ref{fig_sspsd}~Overview of SS-PSD architecture}
-\label{fig_sspsd}
-\end{figure}
-
-\subsection{问题定义}
-
-给定数据集，随机选取部分带标签数据组成有标签集\(\mathcal{D}_{L}=\{({\textbf{x}}_{l},{\textbf{y}}_{l})\}\)，剩余部分作为无标签集\(\mathcal{D}_{U}=\{({\textbf{x}}_{u})\}\)。对于尺寸为\(512\times512\)的图像\(\textbf{x}_{l}\)及其标签\(\textbf{y}_{l}\)，模型的目标是预测特征图\(\mathbb{R} \in \mathcal{S}\times \mathcal{S} \times \mathcal{N}\)，其中图像被划分为\(\mathcal{S}\times \mathcal{S}\)网格。参考DMPR-PS~\cite{huang2019dmpr}方法，特征图\(\mathbb{R}\)对应输入图像中的标线点，\(\mathcal{N}\)维特征描述每个点的属性。随后通过模板匹配判断点对是否构成有效的停车位入口线，过程可表示为：
-
 \begin{equation}
-\textbf{x}_{l} \xrightarrow{M_{\theta}} \mathbb{R}^{\mathcal{S}\times \mathcal{S} \times \mathcal{N}} \xrightarrow {\text{模版匹配}} \text{停车检测结果},
+Recall = \frac{TP}{TP + FN},
 \end{equation}
-其中\(M_{\theta}(\cdot)\)为预测标记点的模型，\(\theta\)为模型参数。与传统全监督方法不同，本文利用易获取的无标签图像\(\textbf{x}_{u}\)提升模型性能。 
-
-\subsection{网络架构}
-
-SS-PSD 采用教师-学生双分支架构（如图 \ref{fig_sspsd} 所示），两者共享相同的网络结构\(M_{\theta}=\{E_{\theta}, D_{\theta}\}\)，包含编码器\(E_{\theta}: \textbf{x}\rightarrow \textbf{z}\)和解码器\(D_{\theta}: \textbf{z}\rightarrow \mathbb{R}^{\mathcal{S} \times \mathcal{S} \times \mathcal{N}}\)。教师模型记为\(M_{\theta}^{T}=\{E_{\theta}^{T}, D_{\theta}^{T}\}\)，学生模型记为\(M_{\theta}^{S}=\{E_{\theta}^{S}, D_{\theta}^{S}\}\)。
-
-（1）学生分支
-
-SS-PSD的学生分支和教师分支均采用编码器-解码器架构。编码器\(E_{\theta}^{S}\)处理有标签数据\(\textbf{x}_{l}\)和无标签数据\(\textbf{x}_{u}\)，生成潜在特征\(\textbf{z}_{l}\)和\(\textbf{z}_{u}\)。结合自适应VAT生成的对抗噪声\(\textbf{r}_{adv}\)，解码器\(D_{\theta}^{S}\)生成最终特征图：
-\begin{equation}
-D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_{L}^{S} / \mathbb{R}_{U}^{S}.
-\end{equation}
-
-特征图\(\mathbb{R}\)对应图像中的标记点，通过模板匹配验证几何关系，判断是否构成有效停车位入口线。
-
-（2）教师分支
-
-在教师分支中，未标记数据\(\textbf{x}_{u}\)经教师编码器\(E_{\theta}^{T}\)处理生成潜在特征\(\textbf{z}_{t}\)，再由解码器\(D_{\theta}^{T}\)生成特征图\(\mathbb{R}_{U}^{T}\)。训练过程中，使用Adam优化器~\cite{kingma2014adam}最小化学生模型损失，同时通过 EMA 利用学生模型参数更新教师模型。 
-
-
-\subsection{自适应特征扰动}
-特征扰动是半监督学习的关键策略之一。本文采用虚拟对抗训练（VAT\cite{miyato2018virtual}）生成对抗噪声，而非随机噪声，旨在最大化扰动前后预测的差异。如图 \ref{fig_sspsd} 左下部分所示，给定潜在特征\(\textbf{z}\)，通过梯度引导生成对抗噪声\(\textbf{r}\)，使\((D_\theta(\textbf{z}+\textbf{r}) - D_\theta(\textbf{z}))\)最大化，以干扰网络预测。要达到理想的扰动效果，\(D_\theta\)的模型质量至关重要，因其决定了梯度的搜索方向。
-
-现有方法如PS-MT~\cite{liu2022perturbed}使用教师模型\(D_{\theta}^{T}\)计算对抗噪声（T-VAT），但本文发现，由于直接梯度引导，训练初期学生模型\(D_{\theta}^{S}\)往往具有更好的特征质量。因此，本文提出自适应虚拟对抗训练（Adaptive-VAT），根据教师与学生模型的抗扰鲁棒性，自适应选择最优对抗噪声。
-
-Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战性的负样本，促使学生模型学习更稳健的车位几何表征。对抗噪声\(\textbf{r}_{adv}\)需满足：
-\begin{equation}
-\begin{align}
-\text{maximise }& \mathcal{M}\Big(d(D_{\theta}^{T}(\mathbf{z}_l / \mathbf{z}_u) , D_{\theta}^{T}(\mathbf{z}_l / \mathbf{z}_u + \textbf{r}_{adv})), 
-&d(D_{\theta}^{S}(\mathbf{z}_l / \mathbf{z}_u), D_{\theta}^{S}(\mathbf{z}_l / \mathbf{z}_u + \textbf{r}_{adv}))
-\Big),\\
-\text{subject to }& ||\mathbf{r}_{adv}||_2 <=\epsilon,
-\end{align}
-\end{equation}
-其中 $d(\cdot,\cdot)$ 为均方误差 (MSE) 损失，$\mathcal{M}(\cdot,\cdot)$ 选择MSE损失更低的解码器作为更优选择。
-
-\subsection{一致性约束}
-在构建无标签数据的一致性约束时，直接计算学生与教师模型预测的MSE损失可能强制错误预测保持一致，进而误导网络学习。此外，对特征图\(\mathbb{R}\)中所有网格单元均等加权也并非最优策略。为此，如图 \ref{fig_sspsd} 右下部分所示，本文引入置信度引导掩码（Confidence-Guided Mask，CGM）一致性，为不同网格单元分配非均衡注意力，并对低置信度区域进行掩码（Mask）处理。
-
-
-本文将输入图像\(\textbf{x}\)划分为\(16\times16\)的网格（即\(\mathcal{S} = 16\)），并设定特征维度\(\mathcal{N} = 9\)（即\(6 + 3\)）：前6维参考DMPR-PS~\cite{huang2019dmpr}，新增3维用于捕捉斜向车位的角度及分类信息。标线点的表征包含：基准点坐标\((x, y)\)、边缘角度\((\cos\theta_{1/2}, \sin\theta_{1/2})\)、形状\(\textbf{s}\)、类型\(\textbf{t}\)（垂直/斜向）和置信度\(C\)。
-
-
-置信度引导的掩码一致性损失\(\mathcal{L}_{CGM}\)定义为：
-\begin{equation}
-\begin{cases}
-\sum_{i=1}^{\mathcal{S}^{2}} \{ ||C_{i}^{S} - C_{i}^{T}||_2 \} & \text{if } C_{i}^{T} < \tau \\
-\sum_{i=1}^{\mathcal{S}^{2}} \{ ||C_{i}^{S} - C_{i}^{T}||_2 + ||q_{i}^{S} - q_{i}^{T}||_2 \times C_{i}^{T} \} & \text{if } C_{i}^{T} \geq \tau
-\end{cases}
-,
-\end{equation}
-
-其中\(q = (x,y,\cos\theta_1,\sin\theta_1,\cos\theta_2,\sin\theta_2,\textbf{s},\textbf{t})\)，下标\(i\)为网格单元索引，\(\tau=0.9\)为置信阈值。该损失仅对高置信度区域施加严格约束，聚焦于更可能包含标记点的网格单元。 
-
-
-\subsection{损失函数}
-（1）有标签数据损失
-
-对于有标签图像对 $({\textbf{x}}_{l},{\textbf{y}}_{l})$，监督损失 $\mathcal{L}_{sup}$ 定义为：
-
-\begin{equation}
-\begin{cases}
-\sum_{i=1}^{\mathcal{S}^{2}} \{ ||C_{i}^{S}||_2 \} & \text{if } \textbf{y}_{li} \ 不存在 \\
-\sum_{i=1}^{\mathcal{S}^{2}} \{ ||C_{i}^{S} - 1||_2 + ||q_{i}^{S} - \hat{q_{i}}||_2 \} & \text{if } \textbf{y}_{li} 存在
-\end{cases}
-,
-\end{equation}%
-其中 $\hat{q_{i}}$ 为真实值，$\textbf{y}_{li}$ 仅当标记点位于网格单元 $i$ 内时存在。
-
-（2）无标签数据损失
-
-对于无标签数据损失，通过教师与学生模型的置信度引导掩码一致性建立无监督约束：
-
-\begin{equation}
-\mathcal{L}_{unsup}(\mathcal{D}_{U}, M_{\theta}^{S}, M_{\theta}^{T})=\mathcal{L}_{CGM}.
-\end{equation}
-
-总目标函数由有标签和无标签数据损失组成：
-
-\begin{equation}
-\begin{array}{l}
-\mathcal{L}_{total}(\mathcal{D}_{L},\mathcal{D}_{U}, M_{\theta}^{S}, M_{\theta}^{T})= 
-\mathcal{L}_{sup}(\mathcal{D}_{L}, M_{\theta}^{S})+ \beta \mathcal{L}_{unsup}(\mathcal{D}_{U}, M_{\theta}^{S}, M_{\theta}^{T})
-\end{array}
-,
-\end{equation}
-其中 $\beta=\frac{N_{\mathcal{D}_{U}}}{N_{\mathcal{D}_{L}}}$ 为无标签与有标签样本数量比，平衡两类损失的贡献。
-
-\begin{table}[!b]
-\centering
-\setlength{\tabcolsep}{4.5mm}
-\caption{不同标注比例下与开源SoTA方法对比（CPPS-D）\\
-Table~\ref{tab_crpsd}~Comparison with open-source SoTA methods under different label ratios (CPPS-D)}
-\begin{tabular}{lccccc}
-\toprule
-Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2 \\
-\midrule
-  标签数 & 1242  & 2484  & 3726 & 7452  & 14901  \\
-\midrule
-DMPR-PS$^{*}$\cite{huang2019dmpr}  & 52.70\% & 66.84\% & 70.28\% & 76.98\% & 83.23\% \\
-GCN$^{*}$\cite{min2021attentional}   & 55.23\% & 63.32\% & 67.80\% & 72.57\% & 76.31\%  \\
-Ours & \textbf{71.72\%} & \textbf{79.75\%} & \textbf{81.03\%} & \textbf{83.78\%}  & \textbf{86.51\%}  \\
-\bottomrule
-\end{tabular}
-\label{tab_crpsd}
-\end{table}
-
-\section{实验结果及分析}
-本节所有实验均在同一硬件平台上进行，具体包括一块Nvidia 2080Ti GPU（12GB显存）和一台配备Intel(R) Xeon(R) E5-2680 v4 @ 2.40GHz CPU的服务器环境。模型训练使用PyTorch框架实现。
-
-\subsection{不同数据划分的结果}
-
-本文参照Mean Teacher\cite{tarvainen2017mean}方法，通过对数据集进行比例抽样来评估所提方法的性能。具体而言，将数据集划分为有标签集和无标签集，其中有标签集比例为\(1/n\)，无标签集比例为\((1 - \frac{1}{n})\)。对于CRPS-D数据集和公开数据集ps2.0，均采用\(1/24\)、\(1/12\)、\(1/8\)、\(1/4\)和\(1/2\)的有标签比例进行实验。由于 SS-PSD 是该领域首个半监督解决方案，因此只能与现有的公开全监督方案进行对比（DMPR-PS$^{*}$ 与 GCN$^{*}$，其中$^{*}$表示已使用 CRPS-D 数据集重新训练），评估指标选用更能体现模型效果的平均精度（\(AP\)）。
-
-（1）CRPS-D 实验结果分析
-
-从表 \ref{tab_crpsd} 可以看出，在 CRPS-D 数据集上（训练集共 29803 张图像），本文方法在不同标注比例下均显著优于现有全监督方法：在标注比例为\(1/24\)（仅 1242 张标注图像）时，本文方法的\(AP\)达到了 71.72\%，较 DMPR-PS\cite{huang2019dmpr} 提升了 19.02 个百分点，较 GCN 提升了 16.49 个百分点，展现了在标注数据极度稀缺情况下的优越性能；在标注比例为\(1/12\)和\(1/8\)时，本文方法分别达到 79.75\% 和 81.03\% 的\(AP\)，较基线方法提升了 6-12 个百分点，表明随着标注数据的增加，本文方法仍能保持显著优势；即使在标注比例为\(1/4\)和\(1/2\)时，本文方法依然能够维持性能领先，分别达到 83.78\% 和 86.51\% 的\(AP\)。
-
-
-（2）ps2.0 实验结果分析
-
-从表 \ref{tab_ps2} 可以看出，在ps2.0数据集上（训练集共 9827 张图像），本文方法同样展现出强大的性能：在标注比例为\(1/24\)时，本文方法的\(AP\)达到 80.44\%，较 DMPR-PS 提升了 19.49 个百分点，较GCN提升了 3.74 个百分点；在标注比例为\(1/12\)和\(1/8\)时，本文方法分别达到 90.47\% 和 94.52\% 的\(AP\)，较基线方法提升了 4-12 个百分点；在标注比例为\(1/4\)和\(1/2\)时，本文方法的性能进一步提升至 96.10\% 和 97.79\% ，已接近全监督方法在完整数据集上的性能水平（DMPR-PS$^{*}$：98.64\%，GCN$^{*}$：98.31\%）。
-
-\begin{table}[!h]
-\centering
-\setlength{\tabcolsep}{4.5mm}
-\caption{不同标注比例下与开源SoTA方法对比（ps2.0）\\
-Table~\ref{tab_ps2}~Comparison with open-source SoTA methods under different label ratios (ps2.0)}
-\begin{tabular}{lccccc}
-\toprule
-Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  \\
-\midrule
-  标签数 & 410  & 819  & 1230 & 2457  & 4913  \\
-\midrule
-    DMPR-PS$^{*}$\cite{huang2019dmpr}  & 60.95\% & 78.05\% & 87.28\% & 93.70\% & 96.47\% \\
-    GCN$^{*}$\cite{min2021attentional}  & 76.70\% & 85.72\% & 92.78\% & 95.47\% & 97.45\% \\
-    Ours & \textbf{80.44\%} & \textbf{90.47\%} & \textbf{94.52\%}  & \textbf{96.10\%} & \textbf{97.79\%} \\
-\bottomrule
-\end{tabular}
-\label{tab_ps2}
-\end{table}
-
-
-\begin{figure}[!h]
-    \centering
-	  \subfloat[CRPS-D]{
-       \includegraphics[width=0.43\linewidth]{figures/chp2/curve/curve_s2.jpg}}
-    \label{5a}
-	  \subfloat[ps2.0]{
-        \includegraphics[width=0.4\linewidth]{figures/chp2/curve/curve_s1.jpg}}
-    \label{5b}
-    \caption{与监督基线相比的改进情况 \\Fig~\ref{fig_curve}~ Improvements over the supervised baseline}
-    \label{fig_curve} 
-\end{figure}
-
-
-图 \ref{fig_curve} 展示了本文方法与监督基线在两个数据集上的性能对比。可以看出，
-在 CRPS-D 数据集上，由于其更高的复杂性和真实性，本文方法相较于监督基线的提升更为显著，特别是在标注数据量较少的情况下。这表明本文提出的半监督方法能够有效利用未标注数据，提取更广泛的特征表示。在 ps2.0 数据集上，尽管基线方法的性能已经较高，本文方法仍然能够实现一定程度的性能提升，验证了所提方法的泛化能力。
-
-综上，本文提出的 SS-PSD 半监督框架能够有效利用未标注数据提升停车位检测性能，在标注数据稀缺的情况下尤为显著。该方法不仅在自建的 CRPS-D 数据集上表现优异，在公开的 ps2.0 数据集上也展现出良好的泛化能力，为解决停车位检测中的数据标注瓶颈提供了新的思路。
-
-
-\subsection{未标记数据有效性分析}
-
-需要说明的是，本文首次提出用于停车位检测的半监督方法，因此直接将其与全监督方法作比较并非完全公平。
-
-\begin{table}[ht]
-\centering
-\setlength{\tabcolsep}{6mm}
-\caption{与近期方法的比较结果 \\
-Table~\ref{tab_recent}~Comparison results with recent methods.}
-\begin{tabular}{lcccc}
-\toprule
-    方法 & 标签数 &  Precision & Recall & F1 \\
-\midrule
-    SAM-PS\cite{zhai2024sam} & 0  & 94.29\% & 81.35\% & 87.34\% \\
-    Ours (1/12) & 819  & \textbf{95.45\%} & \textbf{91.30\%} & \textbf{93.34\%} \\
-\midrule
-       DeepPS\cite{zhang2018vision}  & 9827  & 98.99\% & 99.13\% & 99.06\% \\
-       DMPR-PS\cite{huang2019dmpr} & 9827  & 99.42\% & 99.37\% & 99.39\% \\
-       VPS\cite{li2020vacant}  & 9827  & 99.63\% & 99.10\% & 99.36\% \\
-       GCN\cite{min2021attentional}  & 9827  & 99.56\% & 99.42\% & 99.49\%\\
-       SCCN \cite{zheng2022center}  & 9827  & 99.35\% & 99.17\% & 99.26\% \\
-       Bui et al.\cite{bui2023one} & 9827  &  99.63\% & 99.63\% & 99.63\% \\
-       BEV-PolyNet\cite{duan2025bev} & 9827  &  99.82\% & 99.65\% & 99.73\% \\
-       Ours (1/2) & 4913   & 98.64\% & 98.07\% & 98.35\%\\
-\bottomrule
-\end{tabular}
-\label{tab_recent}
-\end{table}
-
-尽管如此，本文仍提供了与近期方法的对比结果。需要注意的是，这些方法（如SCCN(2020)\cite{zheng2022center}、Bui等人(2023)\cite{bui2023one} 以及SAM-PS(2024)\cite{zhai2024sam}等）并非开源，因此本文只能报告其原始论文在 ps2.0 数据集上的性能。结果如表 \ref{tab_recent} 所示，其中“Ours (1/n)”表示使用\(1/n\)个标签进行训练。
-
-实验结果表明，当仅使用\(1/12\)的标签（819个）时，本文的半监督方法性能显著优于现有的自监督方法（SAM-PS\cite{zhai2024sam}），查准率提升了 1.16\%，查全率提升了 9.95\%；当使用一半的标签（4913个）时，本文方法获得了与全监督模型相当的性能，差异仅约为\(1\%\)，充分体现了半监督学习的优势。
-
-此外，本节还分析了随着标注数据比例增加，SS-PSD 与完全监督基线模型（DMPR-PS\cite{huang2019dmpr}）之间的性能差距。如图 \ref{fig_ps} 和 \ref{fig_crps} 所示，当仅有少量标注数据时，SS-PSD 的性能始终优于完全监督基线模型，黄色部分清晰展示了 SS-PSD 方法带来的性能提升；随着标注数据量增多，这种性能差距逐渐缩小，呈现出收益递减的现象，这符合预期，因为一旦有足够的标注数据，利用未标注数据的边际收益便会降低。
-
-    \begin{figure}[!h]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/chp2/bar/ps.jpg}
-    \caption{SS-PSD与DMPR-PS的性能比较（ps2.0数据集） \\Fig~\ref{fig_ps}~ Performance comparison of SS-PSD and DMPR-PS (ps2.0 dataset)}
-    \label{fig_ps}
-   \end{figure}
-
-    \begin{figure}[!h]
-    \centering
-    \includegraphics[width=1\linewidth]{figures/chp2/bar/crps.jpg}
-    \caption{SS-PSD与DMPR-PS的性能比较（CPRS-D数据集） \\Fig~\ref{fig_crps}~ Performance comparison of SS-PSD and DMPR-PS (CPRS-D dataset)}
-    \label{fig_crps}
-   \end{figure}
-
-这些结果充分验证了本文方法在标注数据稀缺场景下的有效性，同时也展示了其随着监督数据量增加的良好可扩展性。这使得SS-PSD成为标注资源有限的实际应用场景的理想解决方案，为停车位检测任务提供了一种高效、经济的学习范式。
-
-
-\subsection{消融实验}
-本节旨在探究置信度引导掩码（CGM）一致性和自适应特征扰动（Adaptive-VAT）对所提方法性能的影响。所有实验均基于 CRPS-D 数据集，使用标注数据比例设定为 1/12。各组件的具体贡献详见表 \ref{tab_ab}，该表同时展示了标记点检测平均精度（$AP_{marking-point}$）和停车位检测平均精度（$AP_{parking-slot}$）。
-
-实验结果表明，相较于仅采用均方误差（MSE）损失的半监督基线 MT 方法，CGM 一致性约束使得$AP_{parking-slot}$提升了 3.6 个百分点，而 Adaptive-VAT 的引入进一步将$AP_{parking-slot}$提高了 0.82 个百分点。
-
-\begin{table}[!h]
-\centering
-\caption{消融实验结果（1/12标注数据） \\
-Table~\ref{tab_ab}~Ablation study using the 1/12 labeled ratio}
-\begin{tabular}{cccccc}
-\toprule
-   有监督基线 & MT & CGM 一致性  & Adaptive-VAT & $AP_{marking-point}$ & $AP_{parking-slot}$ \\
-\midrule
-    \checkmark  &  &  &  & 72.47\% & 66.84\% \\
-     \checkmark & \checkmark &  &  & 78.77\% & 75.33\% \\
-     \checkmark & \checkmark & \checkmark &  & 80.86\% & 78.93\% \\
-     \checkmark & \checkmark & \checkmark & \checkmark & \textbf{81.59\%} & \textbf{79.75\%} \\
-\bottomrule
-\end{tabular}
-\label{tab_ab}
-\end{table}
-
-为进一步验证各组件的有效性，本节分别针对 CGM 一致性和 Adaptive-VAT 进行了更深入的消融分析：
-
-（1）CGM 一致性
-
-通过逐步去除 CGM 一致性的关键组件，本节深入剖析了其对性能的影响。具体而言，首先去除掩码组件得到 CG 一致性，接着去除置信度权重得到 C 一致性。从 表\ref{tab_ablation} 可以看出：
-仅采用 C 一致性（对所有单元格施加相同约束）时，性能表现较差，停车位检测平均精度仅为 54.88\%；
-引入置信度权重（CG 一致性）后，性能得到显著提升，$AP_{parking-slot}$达到78.22\%；
-进一步加入掩码处理（CGM 一致性），$AP_{parking-slot}$进一步提升至 78.93\%，较 CG 一致性提升了 0.71 个百分点。
-
-（2）Adaptive-VAT
-
-若去除 Adaptive-VAT 的自适应性，其性能会降至传统的 S-VAT\cite{tarvainen2017mean}或 T-VAT\cite{liu2022perturbed}水平。表 \ref{tab_ablation} 的结果显示：
-使用S-VAT 的$AP_{parking-slot}$为 78.87\%，T-VAT 略高，达到 79.53\%。
-应用 Adaptive-VAT 后，$AP_{parking-slot}$进一步提升至 79.75\%，展现出其在 S-VAT 和 T-VAT 之间自适应选择更优策略的能力。
-
-\begin{table}[!h]
-\centering
-\caption{对CGM 一致性和Adaptive-VAT的消融实验 \\
-Table~\ref{tab_ablation}~Ablation study of various components on CGM Consistency and Adaptive-VAT}
-\setlength{\tabcolsep}{10mm}
-\begin{tabular}{lcc}
-\toprule
-   &  $AP_{marking-point}$ & $AP_{parking-slot}$ \\
-\midrule
-      C 一致性 &   60.07\% & 54.88\% \\
-      CG 一致性 &   80.75\% & 78.22\% \\
-      CGM 一致性 &  \textbf{81.86\%} & \textbf{78.93\%} \\
-\midrule
-        S-VAT &   80.97\% & 78.87\% \\
-       T-VAT &   81.16\% & 79.53\% \\
-        Adaptive-VAT &  \textbf{81.59\%} & \textbf{79.75\%} \\
-\bottomrule
-\end{tabular}
-\label{tab_ablation}
-\end{table}
-
-\subsection{超参选择}
-
-本节讨论两个关键超参数的值选择：置信度阈值 ($\tau$) 和干扰强度 ($eps$)，所有实验均使用 1/12 标注比例在 CRPS-D 数据集上训练。
-
-关于置信度阈值 ($\tau$)，参考FixMatch\cite{sohn2020fixmatch}的方法（该方法通过选取置信度更高的标签来提升伪标签的准确率），本文设置了较高的阈值（$\tau$ = 0.9）。为验证该选择的合理性，本文还尝试了将置信度阈值在 0 到 1 之间以 0.1 为步长进行变化，实验结果如表 \ref{tab_confidence} 所示。从表中可以看出，当阈值为 0.9 时性能最优，停车位检测平均精度达到 79.75\%。
-
-\begin{table}[!h]
-\centering
-\setlength{\tabcolsep}{8mm}
-\caption{不同置信度阈值的实验结果\\
-Table~\ref{tab_confidence}~Results of different confidence thresholds.}
-    \begin{tabular}{cccc}
-    \toprule
-    Threshold ($\tau$) & $AP_{marking-point}$ & $AP_{parking-slot}$ & 训练轮数\\
-    \midrule
-    0.1 & 81.12\% & 78.81\%	& 36 \\
-    0.2	& 81.59\%	& 79.47\%	& 22 \\
-    0.3	& 81.28\%	& 79.08\%	& 21 \\
-    0.4	& 81.13\%	& 79.34\%	& 23 \\
-    0.5	& 81.06\%	& 79.01\%	& 17 \\
-    0.6 & 80.75\%	& 79.10\%	& 40 \\
-    0.7	& 81.38\%	& 79.50\%	& 23 \\
-    0.8	& 80.75\%	& 78.95\%	& 26 \\
-    0.9	& \textbf{81.59\%}	& \textbf{79.75\%}	& 22 \\
-    \bottomrule
-    \end{tabular}
-\label{tab_confidence}
-\end{table} 
-
-对于干扰强度 ($eps$)，为证明本文所提 Adaptive-VAT 算法在各类干扰强度下均能展现优异性能，本文对干扰强度进行了调整，分别采用\(eps\) = 10、1 和 0.1这几个取值。表 \ref{tab_eps} 的结果显示，与 S-VAT 和 T-VAT 相比，本文提出的 Adaptive-VAT 方法在不同干扰强度下均表现更优。基于实验结果，本文最终选择$eps = 0.1$，此时停车位检测平均精度达到 79.75\%。
-
-\begin{table}[!h]
-\centering
-\setlength{\tabcolsep}{4mm}
-\caption{不同干扰强度的实验结果\\
-Table~\ref{tab_eps}~Results of different disturbance intensities}
-\begin{tabular}{ccccccc}
-\toprule
- & \multicolumn{3}{@{}c@{}}{$AP_{marking-point}$} & \multicolumn{3}{@{}c@{}}{$AP_{parking-slot}$} \\\cmidrule{2-4}\cmidrule{5-7}%
-   \multirow{-2}{*}{$eps$}  & S-VAT & T-VAT & Ours & S-VAT & T-VAT & Ours \\
-\midrule
-    10.0 & 80.89\% & 80.78\% & 81.32\% &79.11\% & 78.89\% & 79.15\%  \\
-     1.0 & 80.87\% & 81.04\% & 81.68\% &78.65\% &78.89\% & 79.54\%  \\
-     0.1 & 80.97\% & 81.16\% & \textbf{81.59\%} & 78.87\% & 79.53\% & \textbf{79.75\%}  \\
-\bottomrule
-\end{tabular}
-\label{tab_eps}
-\end{table}
-
-
-\subsection{分场景结果}
-
-表 \ref{tab_test} 呈现了监督基线方法 (DMPR-PS\cite{huang2019dmpr}) 与本文所提 SS-PSD 方法在不同场景（对应于 CRPS-D 数据集的子测试集）下的性能评估情况，该结果基于 CRPS-D 数据集训练得出，其中标注数据与未标注数据的比例为 1/12。实验结果表明，无论是在简单场景（如“室内弱光”“室外阴影”），还是复杂场景（如“受损车位”“室外夜晚”），本文模型均展现出更优的性能，停车位检测的可视化结果如图 \ref{fig_result} 所示。
-
-尤为突出的是，本文的半监督解决方案能够通过有效利用易于获取的未标注数据，显著缓解长尾分布所带来的难题。例如，“室外夜晚”子集的数据规模最小（仅 86 张图像），在监督方案下表现最差（平均精度仅为 38.38\%），而本文的 SS-PSD 方法则可大幅提升模型性能，平均精度达到 63.45\%，提升了 25.07 个百分点。
-
-\begin{table}[!h]
-\centering
-\setlength{\tabcolsep}{6mm}
-\caption{分场景子测试集的实验结果\\
-Table~\ref{tab_test}~Evaluation results on the sub-test sets}
-\begin{tabular}{lcccc}
-\toprule
- \multicolumn{2}{c}{} & \multicolumn{2}{c}{$AP_{parking-slot}$} \\ \cmidrule{3-4}%
-   \multirow{-2}{*}{场景子集} & \multirow{-2}{*}{图像数} & DMPR-PS$^{*}$ & Ours & \multirow{-2}{*}{提升} \\
-\midrule
-      室内弱光 & 545  & 74.15\% & 86.68\% & 12.53\%\\
-      室内强光 & 786  & 70.00\% & 84.80\% & 14.80\%\\
-      阴影 & 1389  & 69.19\% & 81.09\% & 11.90\%\\
-      正常日光 & 1703  & 68.06\% & 78.99\% & 10.93\%\\
-\midrule
-      倾斜车位 & 802  & 61.61\% & 76.79\% & 15.18\%\\
-      受损车位 & 302  & 58.90\% & 71.83\% & 12.93\%\\
-      雨天 & 323  & 56.07\% & 71.07\% & 15.00\%\\
-      夜晚 & 86  & 38.38\% & 63.45\% & \textbf{25.07\%} \\
-\bottomrule
-\end{tabular}
- \label{tab_test}
-\end{table}
-
-
-\begin{figure}[!h]
-\centering
-\includegraphics[width=1\textwidth]{figures/chp2/pdf/result.pdf}
-\caption{不同场景的可视化结果 \\Fig~\ref{fig_result}~Visualized results of different scenes}
-\label{fig_result}
-\end{figure}
-
+式中，$TP$（True Positives）表示正确检测出的真实目标数量，$FP$（False Positives）表示误报为目标的背景区域数量，$FN$（False Negatives）表示未被检测出的真实目标数量。
+
+为明确TP的判定标准，本文将标记点定义为$P=\{x, y, s, t, \theta_{1}, \theta_{2}\}$，其中$(x, y)$表示标记点位置，$s$表示形状，$t$表示类型，$\theta_{1}, \theta_{2}$表示两个边缘的角度（以度为单位）。设$P^{g}=\{x^{g}, y^{g}, s^{g}, t^{g}, \theta_{1}^{g}, \theta_{2}^{g}\}$为真实标记点（Ground Truth），$P^{d}=\{x^{d}, y^{d}, s^{d}, t^{d}, \theta_{1}^{d}, \theta_{2}^{d}\}$为检测到的标记点。当满足以下条件时，认为$P^{g}$被准确识别，$P^{d}$为TP：
+
+\begin{subequations}
+  \begin{align}
+  (x^{g}-x^{d})^{2} + (y^{g}-y^{d})^{2} < I^{2} \\
+|\theta_{1}^{g} - \theta_{1}^{d}| < B \ or \ 360^{\circ} - |\theta_{1}^{g} - \theta_{1}^{d}| < B \\
+|\theta_{2}^{g} - \theta_{2}^{d}| < B \ or \ 360^{\circ} - |\theta_{2}^{g} - \theta_{2}^{d}| < B \\
+s^{g} = s^{d} \ and \ t^{g} = t^{d}
+  \end{align}
+  \end{subequations}
+如果满足这些条件，可以认为 $P^{g}$ 被准确识别，并且 $P^{d}$ 为TP。
+
+本文将停车位定义为 $S=\{(x_{1}, y_{1}), (x_{2}, y_{2}), \theta_{s}\}$，其中 $(x_{1}, y_{1})$ 和 $(x_{2}, y_{2})$ 是两个标记点的坐标，$\theta_{s}$ 表示入口线的方向。对于一个 GT 停车位 $S_{g}=\{(x_{1}^{g}, y_{1}^{g}), (x_{2}^{g}, y_{2}^{g}), \theta_{s}^{g}\}$，如果检测到的停车位 $S_{d}=\{(x_{1}^{d}, y_{1}^{d}), (x_{2}^{d}, y_{2}^{d}), \theta_{s}^{d}\}$ 满足以下不等式，则将其视为TP：
+\begin{subequations}
+  \begin{align}
+  (x_{1}^{g}-x_{1}^{d})^{2} + (y_{1}^{g}-y_{1}^{d})^{2} < I^{2} \\
+(x_{2}^{g}-x_{2}^{d})^{2} + (y_{2}^{g}-y_{2}^{d})^{2} < I^{2} \\
+|\theta_{s}^{g} - \theta_{s}^{d}| < B \ or \ 360^{\circ} - |\theta_{s}^{g} - \theta_{s}^{d}| < B
+  \end{align}
+  \end{subequations}
+即当停车位的两个标记点均位于真实停车位（GT）的$I$个像素范围内，且$S_{d}$与$S_{g}$的角度差小于$B$时，判定为真阳性。对于$512 \times 512$分辨率的图像，通常设定$I=10$，$B=30$。
 
 
 \section{本章小结}
 
-本章针对复杂真实场景中停车位检测任务面临的数据规模受限以及标注成本高昂问题，从数据构建与学习范式两个层面展开研究。构建了大规模停车位数据集 CRPS-D，覆盖多光照、多视角、多停车形式及多种天气条件，包含丰富的场景变化和复杂实例，为后续方法研究提供了统一、具有挑战性的数据基础。提出了面向停车位检测任务的半监督检测框架 SS-PSD，基于教师-学生学习范式，通过 CGM 一致性约束和自适应 VAT 扰动，有效利用未标注数据，显著提升了模型的泛化能力与鲁棒性。
-实验结果表明，SS-PSD 在不同标注比例下均显著优于现有全监督方法，特别是在标注数据极度稀缺的情况下性能提升更为明显。该方法在不同场景下均展现出良好的适应性，尤其在长尾分布场景（如夜晚）中表现突出，大幅缓解了数据不平衡问题。本章工作通过构建大规模数据集和提出半监督学习框架，有效缓解了停车位检测在复杂场景下的训练瓶颈，为后续基于单帧与多帧建模的检测方法奠定了坚实的数据与训练基础，同时也为解决其他视觉任务中的数据标注瓶颈提供了新的思路。
-
-
+本章系统梳理了停车位检测领域的现有数据集、通用流程及评估指标，为后续研究奠定理论基础。在数据集方面，重点分析了 ps2.0、PSV、SNU 三个主流公开数据集的特点与应用现状，指出 ps2.0 数据集虽应用广泛但存在场景覆盖有限、缺乏复杂天气条件等不足，为后续构建更具挑战性的数据集提供了明确方向。在方法流程方面，阐述了从图像输入、预处理、特征提取到检测分割的完整 pipeline，明确了各环节的功能定位。在评估指标方面，定义了平均精度（AP）的计算方法及真阳性判定标准，为算法性能评估提供了统一基准。上述理论铺垫为后续章节的数据集构建与检测方法设计提供了必要的知识支撑。
