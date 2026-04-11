@@ -192,25 +192,19 @@ Table~\ref{tab_2ps2}~Comparison of detection performance of different methods on
 
 \begin{table}[!h]
 \centering
-\setlength{\tabcolsep}{4mm}
+\setlength{\tabcolsep}{6mm}
 \caption{本文方法与 GCN\cite{min2021attentional} 在 CRPS-D 数据集上的检测性能对比 \\
 Table~\ref{tab_2crps}~Comparison between the proposed method and GCN\cite{min2021attentional} on CRPS-D dataset}
-    \begin{tabular}{lccccc}
+    \begin{tabular}{lcccc}
         \toprule
-         方法 & 主干网络 & Precision & Recall & $AP$ & $AP$提升 \\
+         方法 & Precision & Recall & $AP$  & 训练轮数\\
         \midrule
-            GCN$^{*}$\cite{min2021attentional}  & \multirow{2}{*}{Resnet18} & 91.38\% & 82.04\% & 78.01\%  & \multirow{2}{*}{4.37\%}\\
-             本文方法  &  & 91.56\%	& 84.54\%	& \textbf{82.38\%}  & \\
+            RGCN18$^{*}$\cite{min2021attentional}   & 91.38\% & 82.04\% & 78.01\%  & 164\\
 
-        \midrule
-             GCN$^{*}$\cite{min2021attentional}  & \multirow{2}{*}{Resnet50} & 90.91\%	& 83.22\%	& 78.63\%  & \multirow{2}{*}{3.47\%}\\
-             本文方法  &  & 91.11\% &	84.89\%	& 82.10\%	  & \\
-        \midrule
-              GCN$^{*}$\cite{min2021attentional}  & \multirow{2}{*}{Darknet} & 91.38\%	& 83.27\%	& 79.01\%  & \multirow{2}{*}{3.92\%}\\
-             本文方法  &  & 91.39\% &	85.00\%	& \textbf{82.93\%}	 	 & \\
-        \midrule
-              GCN$^{*}$\cite{min2021attentional}  & \multirow{2}{*}{Vgg16} & 92.43\%	& 82.75\%	& 79.02\%  & \multirow{2}{*}{4.56\%}\\
-             本文方法  &  & 92.21\%	& 85.54\%	& \textbf{83.58\%}  & \\ 
+             RGCN50$^{*}$\cite{he2016deep}  &  90.91\%	& 83.22\%	& 78.63\%  & 170 \\
+              DGCN$^{*}$\cite{redmon2017yolo9000}   & 91.38\%	& 83.27\%	& 79.01\%  & 162 \\
+              VGCN$^{*}$\cite{simonyan2014very}    & 92.43\%	& 82.75\%	& 79.02\%  & 156 \\
+             Ours  &  91.56\%	& \textbf{84.54\%}	& \textbf{82.38\%}  & 188\\
         \bottomrule
     \end{tabular}
     \label{tab_2crps}

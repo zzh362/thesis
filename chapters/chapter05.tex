@@ -207,16 +207,19 @@ PSTD 数据集中的样本均由同一采集设备在短时间间隔内连续获
 
 \begin{table}[!h]
 \centering
-\setlength{\tabcolsep}{8mm}
+\setlength{\tabcolsep}{6mm}
 \caption{与开源SoTA方法对比\\
 Table~\ref{tab_pstc} Comparison with open-source SoTA methods}
-\begin{tabular}{lccc}
+\begin{tabular}{lcccc}
 \toprule
-    方法 &  Precision & Recall &  $AP$\\
+    方法 &  Precision & Recall &  $AP$ & 训练轮数\\
 \midrule
-       GCN$^{*}$\cite{min2021attentional}  &  87.00\%	& 86.44\%	& 82.20\% \\
-       DMPR-PS$^{*}$\cite{huang2019dmpr} &  91.57\%	& 91.94\%	& 89.96\% \\
-       Ours &   \textbf{92.53\%} & \textbf{92.33\%} & \textbf{91.97\%}\\
+       RGCN18$^{*}$\cite{min2021attentional}  &  87.00\%	& 86.44\%	& 82.20\% & 176 \\
+        RGCN50$^{*}$\cite{he2016deep}  &  90.91\%	& 83.22\%	& 78.63\%  &  \\
+        DGCN$^{*}$\cite{redmon2017yolo9000}   & 91.38\%	& 83.27\%	& 79.01\%  &  \\
+        VGCN$^{*}$\cite{simonyan2014very}    & 92.43\%	& 82.75\%	& 79.02\%  &  \\
+       DMPR-PS$^{*}$\cite{huang2019dmpr} &  91.57\%	& 91.94\%	& 89.96\% & 78 \\
+       Ours &   \textbf{92.53\%} & \textbf{92.33\%} & \textbf{91.97\%} & 55 \\
 \bottomrule
 \end{tabular}
 \label{tab_pstc}
