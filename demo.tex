@@ -10,8 +10,12 @@
 \usepackage{algorithm}
 \usepackage{algpseudocode}
 \usepackage{caption}
-% 设置：单行居中，多行也居中 (justification=centering)
-\captionsetup{justification=centering}
+\usepackage[justification=centering]{caption}
+\renewcommand{\thefigure}{\thechapter-\arabic{figure}}
+\renewcommand{\thetable}{\thechapter-\arabic{table}}
+\renewcommand{\theequation}{\thechapter-\arabic{equation}}
+\captionsetup[figure]{labelsep=space}
+\captionsetup[table]{labelsep=space} 
 
 %%%%%%%%%%%%%%%%%填写封面信息%%%%%%%%%%%%%%%%%%%%%%%%
 \author{张志浩}                                  %作者姓名

@@ -67,24 +67,26 @@ Recall = \frac{TP}{TP + FN},
 
 为明确TP的判定标准，本文将标记点定义为$P=\{x, y, s, t, \theta_{1}, \theta_{2}\}$，其中$(x, y)$表示标记点位置，$s$表示形状，$t$表示类型，$\theta_{1}, \theta_{2}$表示两个边缘的角度（以度为单位）。设$P^{g}=\{x^{g}, y^{g}, s^{g}, t^{g}, \theta_{1}^{g}, \theta_{2}^{g}\}$为真实标记点（Ground Truth），$P^{d}=\{x^{d}, y^{d}, s^{d}, t^{d}, \theta_{1}^{d}, \theta_{2}^{d}\}$为检测到的标记点。当满足以下条件时，认为$P^{g}$被准确识别，$P^{d}$为TP：
 
-\begin{subequations}
-  \begin{align}
-  (x^{g}-x^{d})^{2} + (y^{g}-y^{d})^{2} < I^{2} \\
-|\theta_{1}^{g} - \theta_{1}^{d}| < B \ or \ 360^{\circ} - |\theta_{1}^{g} - \theta_{1}^{d}| < B \\
-|\theta_{2}^{g} - \theta_{2}^{d}| < B \ or \ 360^{\circ} - |\theta_{2}^{g} - \theta_{2}^{d}| < B \\
-s^{g} = s^{d} \ and \ t^{g} = t^{d}
-  \end{align}
-  \end{subequations}
+\begin{equation}
+  \begin{aligned}
+  (x^{g}-x^{d})^{2} + (y^{g}-y^{d})^{2} < I^{2}, \\
+|\theta_{1}^{g} - \theta_{1}^{d}| < B \ or \ 360^{\circ} - |\theta_{1}^{g} - \theta_{1}^{d}| < B , \\
+|\theta_{2}^{g} - \theta_{2}^{d}| < B \ or \ 360^{\circ} - |\theta_{2}^{g} - \theta_{2}^{d}| < B , \\
+s^{g} = s^{d} \ and \ t^{g} = t^{d}.
+\end{aligned}
+  \end{equation}
+
 如果满足这些条件，可以认为 $P^{g}$ 被准确识别，并且 $P^{d}$ 为TP。
 
 本文将停车位定义为 $S=\{(x_{1}, y_{1}), (x_{2}, y_{2}), \theta_{s}\}$，其中 $(x_{1}, y_{1})$ 和 $(x_{2}, y_{2})$ 是两个标记点的坐标，$\theta_{s}$ 表示入口线的方向。对于一个 GT 停车位 $S_{g}=\{(x_{1}^{g}, y_{1}^{g}), (x_{2}^{g}, y_{2}^{g}), \theta_{s}^{g}\}$，如果检测到的停车位 $S_{d}=\{(x_{1}^{d}, y_{1}^{d}), (x_{2}^{d}, y_{2}^{d}), \theta_{s}^{d}\}$ 满足以下不等式，则将其视为TP：
-\begin{subequations}
-  \begin{align}
-  (x_{1}^{g}-x_{1}^{d})^{2} + (y_{1}^{g}-y_{1}^{d})^{2} < I^{2} \\
-(x_{2}^{g}-x_{2}^{d})^{2} + (y_{2}^{g}-y_{2}^{d})^{2} < I^{2} \\
-|\theta_{s}^{g} - \theta_{s}^{d}| < B \ or \ 360^{\circ} - |\theta_{s}^{g} - \theta_{s}^{d}| < B
-  \end{align}
-  \end{subequations}
+\begin{equation}
+  \begin{aligned}
+  (x_{1}^{g}-x_{1}^{d})^{2} + (y_{1}^{g}-y_{1}^{d})^{2} < I^{2}, \\
+(x_{2}^{g}-x_{2}^{d})^{2} + (y_{2}^{g}-y_{2}^{d})^{2} < I^{2}, \\
+|\theta_{s}^{g} - \theta_{s}^{d}| < B \ or \ 360^{\circ} - |\theta_{s}^{g} - \theta_{s}^{d}| < B.
+\end{aligned}
+  \end{equation}
+
 即当停车位的两个标记点均位于真实停车位（GT）的$I$个像素范围内，且$S_{d}$与$S_{g}$的角度差小于$B$时，判定为真阳性。对于$512 \times 512$分辨率的图像，通常设定$I=10$，$B=30$。
 
 
