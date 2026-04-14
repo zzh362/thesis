@@ -99,7 +99,7 @@ CRPS-D 数据集包含 35379 张图像，其中训练集 29803 张，测试集 5
 \centering
 \setlength{\tabcolsep}{1.0mm}
 \caption{测试集场景统计信息\\
-Table~\ref{tab_sence}~Statistics for the scene data in the test set.}
+Table~\ref{tab_sence}~Statistics for the scene data in the test set}
 \begin{tabular}{lccccccccc}
     \toprule
     \multirow{2}{*}{场景} & \multicolumn{2}{c}{室内} & \multicolumn{4}{c}{室外} & \multicolumn{2}{c}{特殊场景} & \multirow{2}{*}{总计} \\
@@ -166,7 +166,7 @@ Table~\ref{tab_slant}~Proportion of slanted parking slots.}
 
 \section{方法介绍}
 
-本节详细阐述 SS-PSD 架构及其半监督学习策略。如图 \ref{fig_sspsd}所示，该架构由两个分支组成：学习分支（学生模型）负责模型训练，指导分支（教师模型）通过指数移动平均（EMA）更新参数。图中左下和右下部分分别对应 \textbf{Adaptive-VAT}自适应特征扰动 和 \textbf{CGM} 一致性约束模块。 
+本节详细阐述 SS-PSD 架构及其半监督学习策略。如图 \ref{fig_sspsd}所示，该架构由两个分支组成：学习分支（学生模型）负责模型训练，指导分支（教师模型）通过指数移动平均（EMA）更新参数。
 
 \begin{figure}[!h]
 \centering
@@ -201,9 +201,15 @@ D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_
 
 在教师分支中，未标记数据\(\textbf{x}_{u}\)经教师编码器\(E_{\theta}^{T}\)处理生成潜在特征\(\textbf{z}_{t}\)，再由解码器\(D_{\theta}^{T}\)生成特征图\(\mathbb{R}_{U}^{T}\)。训练过程中，使用Adam优化器~\cite{kingma2014adam}最小化学生模型损失，同时通过 EMA 利用学生模型参数更新教师模型。 
 
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.7\textwidth]{figures/chp2/pdf/vat.pdf}
+\caption{Adaptive-VAT 模块示意图\\Fig~\ref{fig_vat}~Overview of the Adaptive-VAT module}
+\label{fig_vat}
+\end{figure}
 
 \subsection{自适应特征扰动}
-特征扰动是半监督学习的关键策略之一。SS-PSD 采用虚拟对抗训练（VAT\cite{miyato2018virtual}）生成对抗噪声，而非随机噪声，旨在最大化扰动前后预测的差异。如图 \ref{fig_sspsd} 左下部分所示，给定潜在特征\(\textbf{z}\)，通过梯度引导生成对抗噪声\(\textbf{r}\)，使\((D_\theta(\textbf{z}+\textbf{r}) - D_\theta(\textbf{z}))\)最大化，以干扰网络预测。要达到理想的扰动效果，\(D_\theta\)的模型质量至关重要，因其决定了梯度的搜索方向。
+特征扰动是半监督学习的关键策略之一。SS-PSD 采用虚拟对抗训练（VAT\cite{miyato2018virtual}）生成对抗噪声，而非随机噪声，旨在最大化扰动前后预测的差异。如图 \ref{fig_vat} 所示，给定潜在特征\(\textbf{z}\)，通过梯度引导生成对抗噪声\(\textbf{r}\)，使\((D_\theta(\textbf{z}+\textbf{r}) - D_\theta(\textbf{z}))\)最大化，以干扰网络预测。要达到理想的扰动效果，\(D_\theta\)的模型质量至关重要，因其决定了梯度的搜索方向。
 
 现有方法如PS-MT~\cite{liu2022perturbed}使用教师模型\(D_{\theta}^{T}\)计算对抗噪声（T-VAT），但本文发现，由于直接梯度引导，训练初期学生模型\(D_{\theta}^{S}\)往往具有更好的特征质量。因此，本文提出自适应虚拟对抗训练（Adaptive-VAT），根据教师与学生模型的抗扰鲁棒性，自适应选择最优对抗噪声。
 
@@ -219,8 +225,14 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 其中 $d(\cdot,\cdot)$ 为均方误差 (MSE) 损失，$\mathcal{M}(\cdot,\cdot)$ 选择MSE损失更低的解码器作为更优选择。
 
 \subsection{一致性约束}
-在构建无标签数据的一致性约束时，直接计算学生与教师模型预测的MSE损失可能强制错误预测保持一致，进而误导网络学习。此外，对特征图\(\mathbb{R}\)中所有网格单元均等加权也并非最优策略。为此，如图 \ref{fig_sspsd} 右下部分所示，本文引入置信度引导掩码一致性约束（CGM），为不同网格单元分配非均衡注意力，并对低置信度区域进行掩码处理。
+在构建无标签数据的一致性约束时，直接计算学生与教师模型预测的MSE损失可能强制错误预测保持一致，进而误导网络学习。此外，对特征图\(\mathbb{R}\)中所有网格单元均等加权也并非最优策略。为此，如图 \ref{fig_cgm} 所示，本文引入置信度引导掩码一致性约束（CGM），为不同网格单元分配非均衡注意力，并对低置信度区域进行掩码处理。
 
+\begin{figure}[!h]
+\centering
+\includegraphics[width=0.8\textwidth]{figures/chp2/pdf/cgm.pdf}
+\caption{CGM 一致性约束示意图\\Fig~\ref{fig_cgm}~Overview of CGM consistency constraint}
+\label{fig_cgm}
+\end{figure}
 
 本文将输入图像\(\textbf{x}\)划分为\(16\times16\)的网格（即\(\mathcal{S} = 16\)），并设定特征维度\(\mathcal{N} = 9\)（即\(6 + 3\)）：前6维参考DMPR-PS~\cite{huang2019dmpr}，新增3维用于捕捉斜向车位的角度及分类信息。标线点的表征包含：基准点坐标\((x, y)\)、边缘角度\((\cos\theta_{1/2}, \sin\theta_{1/2})\)、形状\(\textbf{s}\)、类型\(\textbf{t}\)（垂直/斜向）和置信度\(C\)。
 
@@ -466,7 +478,7 @@ Table~\ref{tab_ablation}~Ablation study of various components on CGM Consistency
 \centering
 \setlength{\tabcolsep}{8mm}
 \caption{不同置信度阈值的实验结果\\
-Table~\ref{tab_confidence}~Results of different confidence thresholds.}
+Table~\ref{tab_confidence}~Results of different confidence thresholds}
     \begin{tabular}{cccc}
     \toprule
     Threshold ($\tau$) & $AP_{marking-point}$ & $AP_{parking-slot}$ & 训练轮数\\
@@ -520,7 +532,7 @@ Table~\ref{tab_test}~Evaluation results on the sub-test sets}
 \begin{tabular}{lcccc}
 \toprule
  \multicolumn{2}{c}{} & \multicolumn{2}{c}{$AP_{parking-slot}$} \\ \cmidrule{3-4}%
-   \multirow{-2}{*}{场景子集} & \multirow{-2}{*}{图像数} & DMPR-PS$^{*}$ & Ours & \multirow{-2}{*}{提升} \\
+   \multirow{-2}{*}{场景子集} & \multirow{-2}{*}{图像数} & DMPR-PS$^{*}$\cite{huang2019dmpr} & Ours & \multirow{-2}{*}{提升} \\
 \midrule
       室内弱光 & 545  & 74.15\% & 86.68\% & 12.53\%\\
       室内强光 & 786  & 70.00\% & 84.80\% & 14.80\%\\
