@@ -145,7 +145,9 @@ FUNCTION {bbl.sine.nomine} { language empty$ { "s.~n." } { "出版者不详" } i
 FUNCTION {bbl.comma}       { language empty$ { ", " } { "，" } if$ }
 FUNCTION {bbl.colon}       { language empty$ { ": " } { "：" } if$ }
 FUNCTION {bbl.period}      { language empty$ { "." } { "．" } if$ }
-FUNCTION {bbl.parallel}    { "~//~" }
+% FUNCTION {bbl.parallel}    { "~//~" }
+%llw
+FUNCTION {bbl.parallel}    { "//" }
 
 FUNCTION {bbl.st}          { "st" }	% 序数词后缀
 FUNCTION {bbl.nd}          { "nd" }	% 序数词后缀
@@ -2059,6 +2061,17 @@ FUNCTION {format.collection.title} {
     }
   if$
 }
+
+%llw
+FUNCTION {format.proceedings.title} {
+  booktitle empty$
+    { "" }
+    { after.title 'output.state :=
+      "In " booktitle *
+    }
+  if$
+}
+
 % 图书中析出的文献
 FUNCTION {inbook} { 
   start.entry
@@ -2215,52 +2228,67 @@ FUNCTION {incollection}
   fin.entry
 }
 
-% 论文集中析出的文献
+% % 论文集中析出的文献
+% FUNCTION {inproceedings} { 
+%   start.entry
+
+%   format.authors "author" output.warn
+%   format.book.title "title"  output.warn
+%   format.collection.editors "editor" output.warn
+%   format.collection.title "booktitle" output.warn
+%   format.address output
+%   format.month.year output
+% %  format.address.publisher.year	output.nonnull % 出版项
+%   format.pages "pages"          output.warn    %
+%   format.url                    output	       % URL
+%   format.note                   output	       % 备注项 
+% %   format.in.booktitle "booktitle" output.warn
+% %       %format.bvolume output
+% %       %format.number.series output
+% %       %format.pages output
+% %       address empty$
+% % 	{ organization publisher new.sentence.checkb
+% % 	  organization output
+% % 	  publisher output
+% % 	  %format.date "year" output.warn
+% % 	  %year output
+% % 	  format.date ":" * format.pages * output
+% % 	}
+% % 	{ %address output.nonnull
+% % 	  format.address.publisher.year output  
+% % 	  %format.date "year" output.warn
+% % 	  % year output
+% % 	  format.date ":" * format.pages * output
+% % 	  new.sentence
+% % 	  organization output
+% % 	  %publisher output
+% % 	}
+% %       if$
+% %       new.block
+%       % pages output
+%       %remove.dots
+    
+% %     { format.incoll.inproc.crossref output.nonnull
+% %       format.pages output
+% %     }
+% %   if$
+% %   new.block
+% %   note output  
+%   fin.entry
+% }
+
+%llw
 FUNCTION {inproceedings} { 
   start.entry
 
   format.authors "author" output.warn
-  format.book.title "title"  output.warn
-  format.collection.editors "editor" output.warn
-  format.collection.title "booktitle" output.warn
+  format.book.title "title" output.warn
+  format.proceedings.title "booktitle" output.warn
   format.address output
   format.month.year output
-%  format.address.publisher.year	output.nonnull % 出版项
-  format.pages "pages"          output.warn    %
-  format.url                    output	       % URL
-  format.note                   output	       % 备注项 
-%   format.in.booktitle "booktitle" output.warn
-%       %format.bvolume output
-%       %format.number.series output
-%       %format.pages output
-%       address empty$
-% 	{ organization publisher new.sentence.checkb
-% 	  organization output
-% 	  publisher output
-% 	  %format.date "year" output.warn
-% 	  %year output
-% 	  format.date ":" * format.pages * output
-% 	}
-% 	{ %address output.nonnull
-% 	  format.address.publisher.year output  
-% 	  %format.date "year" output.warn
-% 	  % year output
-% 	  format.date ":" * format.pages * output
-% 	  new.sentence
-% 	  organization output
-% 	  %publisher output
-% 	}
-%       if$
-%       new.block
-      % pages output
-      %remove.dots
-    
-%     { format.incoll.inproc.crossref output.nonnull
-%       format.pages output
-%     }
-%   if$
-%   new.block
-%   note output  
+  format.pages "pages" output.warn
+  format.url output
+  format.note output
   fin.entry
 }
 

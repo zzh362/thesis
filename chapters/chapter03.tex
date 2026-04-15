@@ -17,7 +17,7 @@
 
 综上，本章从数据构建与学习范式两方面展开研究：
 
-（1）构建了复杂真实场景停车位数据集 CRPS-D，覆盖多光照、多场景和多种停车形式，为复杂场景下的停车位检测研究提供统一数据基础。该数据集是目前规模最大的真实世界停车位检测基准，以其更大的数据规模、更密集的实例和更具挑战性的场景，推动该领域向实际应用场景迈进。
+（1）构建了复杂真实场景停车位数据集 CRPS-D，覆盖多光照、多场景和多种停车形式，为复杂场景下的停车位检测研究提供统一数据基础。
 
 （2）设计了面向停车位检测的半监督检测方法 SS-PSD，通过教师-学生学习范式挖掘未标注数据的潜在信息，为后续结构感知与时序建模方法的研究奠定基础。 
 
@@ -39,10 +39,10 @@ CRPS-D 数据集包含 35379 张图像，其中训练集 29803 张，测试集 5
 
 （2）数据规模
 
-数据规模是现代视觉模型（如SAM\cite{kirillov2023segment}）具有较高性能的关键因素，也是本文构建大规模数据集的核心动机。从表 \ref{tab_datascale} 可以看出，CRPS-D 在图像数量和车位总数上均实现了显著提升：图像总数达 35739 张，分别是 ps2.0 的 2.94 倍和SNU的 1.57 倍；总车位数达 142081 个，约为 ps2.0 的 12.2 倍、SNU的 2.28 倍，为深度神经网络提供了更丰富的学习样本。
+数据规模是现代视觉模型（如SAM\cite{kirillov2023segment}）具有较高性能的关键因素，也是本文构建较大规模数据集的核心动机。从表 \ref{tab_datascale} 可以看出，CRPS-D 在图像数量和车位总数上均实现了显著提升：图像总数达 35739 张，分别是 ps2.0 的 2.94 倍和SNU的 1.57 倍；总车位数达 142081 个，约为 ps2.0 的 12.2 倍、SNU的 2.28 倍，为深度神经网络提供了更丰富的学习样本。
 从训练数据分布来看，CRPS-D 的训练集包含 29803 张图像，是 ps2.0 训练集的 3.03 倍，SNU 训练集的 1.63 倍；训练集中的车位数达 118057 个，是ps2.0的 12.46 倍，SNU 的 2.42 倍。从测试数据来看，CRPS-D 的测试集包含 5936 张图像，是 ps2.0 测试集的 2.54 倍，SNU测试集的 1.31 倍；测试集中的车位数达 24024 个，是 ps2.0 的 11.08 倍，SNU的 1.77 倍。
 
-\begin{table}[!b]
+\begin{table}[!h]
 \centering
 \setlength{\tabcolsep}{4.0mm}
 \caption{数据规模对比表 \\Table~\ref{tab_datascale}~Comparison results of data scale}
@@ -75,7 +75,7 @@ CRPS-D 数据集包含 35379 张图像，其中训练集 29803 张，测试集 5
 
 如表 \ref{tab_density} 所示，CRPS-D 的车位-图像密度高达 3.98，远高于 ps2.0 的 0.96 和 SNU 的 2.74。从训练集密度来看，CRPS-D 的密度为 3.96，是ps2.0 的 4.13 倍，SNU 的 1.48 倍；从测试集密度来看，CRPS-D 的密度为 4.05，是 ps2.0 的 4.35 倍，SNU的 1.35 倍。
 
-这种高密度特性意味着 CRPS-D 包含更复杂的空间上下文和更多重叠遮挡场景，能够促使模型学习更鲁棒的特征表示，而非简单的模板匹配，为训练高泛化能力的深度感知网络奠定了坚实基础。同时，大规模数据也为半监督学习提供了充足的标注样本，有助于更有效地利用未标注数据提升模型性能。
+这种高密度特性意味着 CRPS-D 包含更复杂的空间上下文和更多重叠遮挡场景，能够促使模型学习更鲁棒的特征表示，而非简单的模板匹配，为训练高泛化能力的深度感知网络奠定了坚实基础。同时，较大规模的数据也为半监督学习提供了充足的标注样本，有助于更有效地利用未标注数据提升模型性能。
 
 \begin{table}[!t]
 \centering
@@ -116,7 +116,7 @@ Table~\ref{tab_sence}~Statistics for the scene data in the test set}
 
 （3）场景分析
 
-为全面覆盖真实世界的复杂泊车环境，CRPS-D 数据集细分为八个场景子集，包括室内弱光、室内强光、室外正常日光、室外雨天、室外阴影、室外夜晚、倾斜车位和受损车位等多样化场景。
+为全面覆盖真实世界的复杂泊车环境，CRPS-D 数据集细分为八个场景子集，包括“室内弱光、室内强光、室外正常日光、室外雨天、室外阴影、室外夜晚、倾斜车位和受损车位“等多样化场景。
 从表 \ref{tab_sence} 可以看出，CRPS-D 在场景覆盖广度上实现了显著突破：不仅新增了室外夜晚和受损车位等挑战性场景，填补了现有数据集在极端条件下的空白，还在各细分场景的样本数量上实现了量级提升。
 这种多样化的场景覆盖和充足的样本数量，使得 CRPS-D 能够更全面地模拟真实世界的泊车环境，为模型训练提供更丰富的场景变体，有助于提升模型在复杂场景下的鲁棒性。
 图 \ref{fig_crpsd} 展示了各场景的示例图像，直观体现了 CRPS-D 更贴近真实泊车场景的特点。
@@ -166,7 +166,7 @@ Table~\ref{tab_slant}~Proportion of slanted parking slots.}
 
 \section{方法介绍}
 
-本节详细阐述 SS-PSD 架构及其半监督学习策略。如图 \ref{fig_sspsd}所示，该架构由两个分支组成：学习分支（学生模型）负责模型训练，指导分支（教师模型）通过指数移动平均（EMA）更新参数。
+本节详细阐述 SS-PSD 架构及其半监督学习策略。如图 \ref{fig_sspsd}所示，该架构由两个分支组成：学习分支（学生模型）负责模型训练，指导分支（教师模型）通过指数移动平均（Exponential Moving Average，EMA）更新参数。
 
 \begin{figure}[!h]
 \centering
@@ -190,7 +190,7 @@ SS-PSD 采用教师-学生双分支架构（如图 \ref{fig_sspsd} 所示），�
 
 （1）学生分支
 
-SS-PSD 的学生分支和教师分支均采用编码器-解码器架构。编码器\(E_{\theta}^{S}\)处理有标签数据\(\textbf{x}_{l}\)和无标签数据\(\textbf{x}_{u}\)，生成潜在特征\(\textbf{z}_{l}\)和\(\textbf{z}_{u}\)。结合自适应VAT生成的对抗噪声\(\textbf{r}_{adv}\)，解码器\(D_{\theta}^{S}\)生成最终特征图：
+SS-PSD 的学生分支和教师分支均采用编码器-解码器架构。编码器\(E_{\theta}^{S}\)处理有标签数据\(\textbf{x}_{l}\)和无标签数据\(\textbf{x}_{u}\)，生成潜在特征\(\textbf{z}_{l}\)和\(\textbf{z}_{u}\)。结合 Adaptive-VAT 生成的对抗噪声\(\textbf{r}_{adv}\)，解码器\(D_{\theta}^{S}\)生成最终特征图：
 \begin{equation}
 D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_{L}^{S} / \mathbb{R}_{U}^{S}.
 \end{equation}
@@ -209,7 +209,7 @@ D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_
 \end{figure}
 
 \subsection{自适应特征扰动}
-特征扰动是半监督学习的关键策略之一。SS-PSD 采用虚拟对抗训练（VAT\cite{miyato2018virtual}）生成对抗噪声，而非随机噪声，旨在最大化扰动前后预测的差异。如图 \ref{fig_vat} 所示，给定潜在特征\(\textbf{z}\)，通过梯度引导生成对抗噪声\(\textbf{r}\)，使\((D_\theta(\textbf{z}+\textbf{r}) - D_\theta(\textbf{z}))\)最大化，以干扰网络预测。要达到理想的扰动效果，\(D_\theta\)的模型质量至关重要，因其决定了梯度的搜索方向。
+特征扰动是半监督学习的关键策略之一。SS-PSD 采用虚拟对抗训练（Virtual Adversarial Training，VAT\cite{miyato2018virtual}）生成对抗噪声，而非随机噪声，旨在最大化扰动前后预测的差异。如图 \ref{fig_vat} 所示，给定潜在特征\(\textbf{z}\)，通过梯度引导生成对抗噪声\(\textbf{r}\)，使\((D_\theta(\textbf{z}+\textbf{r}) - D_\theta(\textbf{z}))\)最大化，以干扰网络预测。要达到理想的扰动效果，\(D_\theta\)的模型质量至关重要，因其决定了梯度的搜索方向。
 
 现有方法如PS-MT~\cite{liu2022perturbed}使用教师模型\(D_{\theta}^{T}\)计算对抗噪声（T-VAT），但本文发现，由于直接梯度引导，训练初期学生模型\(D_{\theta}^{S}\)往往具有更好的特征质量。因此，本文提出自适应虚拟对抗训练（Adaptive-VAT），根据教师与学生模型的抗扰鲁棒性，自适应选择最优对抗噪声。
 
@@ -222,7 +222,7 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 \text{subject to }& ||\mathbf{r}_{adv}||_2 <=\epsilon,
 \end{align}
 \end{equation}
-其中 $d(\cdot,\cdot)$ 为均方误差 (MSE) 损失，$\mathcal{M}(\cdot,\cdot)$ 选择MSE损失更低的解码器作为更优选择。
+其中 $d(\cdot,\cdot)$ 为均方误差（Mean Squared Error，MSE）损失，$\mathcal{M}(\cdot,\cdot)$ 选择 MSE 损失更低的解码器作为更优选择。
 
 \subsection{一致性约束}
 在构建无标签数据的一致性约束时，直接计算学生与教师模型预测的MSE损失可能强制错误预测保持一致，进而误导网络学习。此外，对特征图\(\mathbb{R}\)中所有网格单元均等加权也并非最优策略。为此，如图 \ref{fig_cgm} 所示，本文引入置信度引导掩码一致性约束（CGM），为不同网格单元分配非均衡注意力，并对低置信度区域进行掩码处理。
@@ -246,7 +246,7 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 ,
 \end{equation}
 
-其中\(q = (x,y,\cos\theta_1,\sin\theta_1,\cos\theta_2,\sin\theta_2,\textbf{s},\textbf{t})\)，下标\(i\)为网格单元索引，\(\tau=0.9\)为置信阈值。该损失仅对高置信度区域施加严格约束，聚焦于更可能包含标记点的网格单元。 
+其中\(q = (x,y,\cos\theta_1,\sin\theta_1,\cos\theta_2,\sin\theta_2,\textbf{s},\textbf{t})\)，上标\(S\)、\(T\)分别对应学生模型和教师模型的预测输出，下标\(i\)为网格单元索引，\(\tau=0.9\)为置信阈值。该损失仅对高置信度区域施加严格约束，聚焦于更可能包含标记点的网格单元。 
 
 
 \subsection{损失函数}
@@ -256,8 +256,8 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 
 \begin{equation}
 \begin{cases}
-\sum_{i=1}^{\mathcal{S}^{2}} \{ ||C_{i}^{S}||_2 \} & \text{if } \textbf{y}_{li} \ 不存在 \\
-\sum_{i=1}^{\mathcal{S}^{2}} \{ ||C_{i}^{S} - 1||_2 + ||q_{i}^{S} - \hat{q_{i}}||_2 \} & \text{if } \textbf{y}_{li} 存在
+\sum_{i=1}^{\mathcal{S}^{2}} \{ ||C_{i}^{S}||_2 \} & \text{if } \textbf{y}_{li} \ not \ exists \\
+\sum_{i=1}^{\mathcal{S}^{2}} \{ ||C_{i}^{S} - 1||_2 + ||q_{i}^{S} - \hat{q_{i}}||_2 \} & \text{if } \textbf{y}_{li} \ exists \\
 \end{cases}
 ,
 \end{equation}%
@@ -276,11 +276,11 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 \begin{equation}
 \begin{array}{l}
 \mathcal{L}_{total}(\mathcal{D}_{L},\mathcal{D}_{U}, M_{\theta}^{S}, M_{\theta}^{T})= 
-\mathcal{L}_{sup}(\mathcal{D}_{L}, M_{\theta}^{S})+ \beta \mathcal{L}_{unsup}(\mathcal{D}_{U}, M_{\theta}^{S}, M_{\theta}^{T})
+\mathcal{L}_{sup}(\mathcal{D}_{L}, M_{\theta}^{S})+ \beta \cdot \mathcal{L}_{unsup}(\mathcal{D}_{U}, M_{\theta}^{S}, M_{\theta}^{T})
 \end{array}
 ,
 \end{equation}
-其中 $\beta=\frac{N_{\mathcal{D}_{U}}}{N_{\mathcal{D}_{L}}}$ 为无标签与有标签样本数量比，平衡两类损失的贡献。
+其中 $\beta$ 为无标签与有标签样本数量比，平衡两类损失的贡献。
 
 \begin{table}[!b]
 \centering
@@ -517,12 +517,12 @@ Table~\ref{tab_eps}~Results of different disturbance intensities}
 \label{tab_eps}
 \end{table}
 
-
-\subsection{分场景结果}
-
-表 \ref{tab_test} 呈现了监督基线方法 (DMPR-PS\cite{huang2019dmpr}) 与本文所提 SS-PSD 方法在不同场景（对应于 CRPS-D 数据集的子测试集）下的性能评估情况，该结果基于 CRPS-D 数据集训练得出，其中标注数据与未标注数据的比例为 1/12。实验结果表明，无论是在简单场景（如“室内弱光”“室外阴影”），还是复杂场景（如“受损车位”“室外夜晚”），本文模型均展现出更优的性能，停车位检测的可视化结果如图 \ref{fig_result} 所示。
-
-尤为突出的是，SS-PSD 能够通过有效利用易于获取的未标注数据，显著缓解长尾分布所带来的难题。例如，“室外夜晚”子集的数据规模最小（仅 86 张图像），在监督方案下表现最差（平均精度仅为 38.38\%），而本文的 SS-PSD 方法则可大幅提升模型性能，平均精度达到 63.45\%，提升了 25.07 个百分点。
+\begin{figure}[!h]
+\centering
+\includegraphics[width=1\textwidth]{figures/chp2/pdf/result.pdf}
+\caption{不同场景的可视化结果 \\Fig~\ref{fig_result}~Visualized results of different scenes}
+\label{fig_result}
+\end{figure}
 
 \begin{table}[!h]
 \centering
@@ -549,18 +549,17 @@ Table~\ref{tab_test}~Evaluation results on the sub-test sets}
 \end{table}
 
 
-\begin{figure}[!h]
-\centering
-\includegraphics[width=1\textwidth]{figures/chp2/pdf/result.pdf}
-\caption{不同场景的可视化结果 \\Fig~\ref{fig_result}~Visualized results of different scenes}
-\label{fig_result}
-\end{figure}
+\subsection{分场景结果}
+
+表 \ref{tab_test} 呈现了监督基线方法（DMPR-PS\cite{huang2019dmpr}）与本文所提 SS-PSD 方法在不同场景（对应于 CRPS-D 数据集的子测试集）下的性能评估情况，该结果基于 CRPS-D 数据集训练得出，其中标注数据与未标注数据的比例为 1/12。实验结果表明，无论是在简单场景（如“室内弱光”“室外阴影”），还是复杂场景（如“受损车位”“室外夜晚”），本文模型均展现出更优的性能，停车位检测的可视化结果如图 \ref{fig_result} 所示。
+
+尤为突出的是，SS-PSD 能够通过有效利用易于获取的未标注数据，显著缓解长尾分布所带来的难题。例如，“室外夜晚”子集的数据规模最小（仅 86 张图像），在监督方案下表现最差（平均精度仅为 38.38\%），而本文的 SS-PSD 方法则可大幅提升模型性能，平均精度达到 63.45\%，提升了 25.07 个百分点。
 
 
 
 \section{本章小结}
 
-本章针对复杂真实场景中停车位检测任务面临的数据规模受限以及标注成本高昂问题，从数据构建与学习范式两个层面展开研究。构建了大规模复杂真实场景停车位数据集 CRPS-D，覆盖多光照、多视角、多停车形式及多种天气条件，包含丰富的场景变化和复杂实例，为后续方法研究提供了统一、具有挑战性的数据基础。同时提出了面向停车位检测任务的半监督检测方法 SS-PSD，基于教师-学生学习范式，通过 CGM 一致性约束和自适应 VAT 扰动，有效利用未标注数据，显著提升了模型的泛化能力与鲁棒性。
-实验结果表明，SS-PSD 在不同标注比例下均显著优于现有全监督方法，特别是在标注数据极度稀缺的情况下性能提升更为明显。SS-PSD 在不同场景下均展现出良好的适应性，尤其在长尾分布场景（如夜晚）中表现突出，大幅缓解了数据不平衡问题。本章工作通过构建数据集和提出半监督学习方法，有效缓解了停车位检测在复杂场景下的训练瓶颈，为后续基于空间感知建模与多帧时序建模的检测方法奠定了坚实的数据与训练基础，同时也为解决其他视觉任务中的数据标注瓶颈提供了新的思路。
+本章针对复杂真实场景中停车位检测任务面临的数据规模受限以及标注成本高昂问题，从数据构建与学习范式两个层面展开研究。构建了新的复杂真实场景停车位数据集 CRPS-D，覆盖多光照、多视角、多停车形式及多种天气条件，包含丰富的场景变化和复杂实例，为后续方法研究提供了统一、具有挑战性的数据基础。同时提出了面向停车位检测任务的半监督检测方法 SS-PSD，基于教师-学生学习范式，通过 CGM 一致性约束和自适应 VAT 扰动，有效利用未标注数据，显著提升了模型的泛化能力与鲁棒性。
+实验结果表明，SS-PSD 在不同标注比例下均显著优于现有全监督方法，特别是在标注数据极度稀缺的情况下性能提升更为明显。SS-PSD 在不同场景下均展现出良好的适应性，尤其在长尾分布场景（如夜晚）中表现突出，大幅缓解了数据不平衡问题。
 
 

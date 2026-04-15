@@ -56,11 +56,11 @@
 \def\BJTU@value@studentNumber{XXXX}
 \def\BJTU@value@advisor{XXXX}
 \def\BJTU@value@advisorTitle{XXXX}
-\def\BJTU@value@engineeringMasterField{人工智能}
+\def\BJTU@value@engineeringMasterField{XXXX} %人工智能
 \if@isDoctor
 \def\BJTU@value@degreeLevel{博士}
 \else
-\def\BJTU@value@degreeLevel{硕士}
+\def\BJTU@value@degreeLevel{XX} %硕士
 \fi
 \def\BJTU@value@degreeType{XXXX}
 \def\BJTU@value@major{XXXX}
