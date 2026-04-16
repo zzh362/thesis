@@ -45,7 +45,7 @@ CRPS-D 数据集包含 35379 张图像，其中训练集 29803 张，测试集 5
 \begin{table}[!h]
 \centering
 \setlength{\tabcolsep}{4.0mm}
-\caption{数据规模对比表 \\Table~\ref{tab_datascale}~Comparison results of data scale}
+\caption{数据集规模对比表 \\Table~\ref{tab_datascale}~Comparison of dataset scale}
 \begin{tabular}{llccc}
         \toprule
          数据集  & & ps2.0\cite{zhang2018vision} & SNU\cite{do2020context} & Ours \\
@@ -79,7 +79,8 @@ CRPS-D 数据集包含 35379 张图像，其中训练集 29803 张，测试集 5
 
 \begin{table}[!t]
 \centering
-\caption{车位图像密度 \\Table~\ref{tab_density}~Density of parking slots }
+\setlength{\tabcolsep}{1.5mm}
+\caption{不同数据集的规模与车位-图像密度 $\rho$ 对比 \\Table~\ref{tab_density}~Scale and parking slot-to-image density ($\rho$) comparison }
 \begin{tabular}{lccccccccc}
 \toprule
  & \multicolumn{3}{c}{ps2.0\cite{zhang2018vision}} & \multicolumn{3}{c}{SNU\cite{do2020context}} & \multicolumn{3}{c}{Ours} \\\cmidrule{2-4}\cmidrule{5-7}\cmidrule{8-10}%
@@ -98,8 +99,8 @@ CRPS-D 数据集包含 35379 张图像，其中训练集 29803 张，测试集 5
 \begin{table}[!t]
 \centering
 \setlength{\tabcolsep}{1.0mm}
-\caption{测试集场景统计信息\\
-Table~\ref{tab_sence}~Statistics for the scene data in the test set}
+\caption{测试集场景分布统计\\
+Table~\ref{tab_sence}~Scene distribution in the test set}
 \begin{tabular}{lccccccccc}
     \toprule
     \multirow{2}{*}{场景} & \multicolumn{2}{c}{室内} & \multicolumn{4}{c}{室外} & \multicolumn{2}{c}{特殊场景} & \multirow{2}{*}{总计} \\
@@ -124,8 +125,8 @@ Table~\ref{tab_sence}~Statistics for the scene data in the test set}
 \begin{table}[!t]
 \centering
 \setlength{\tabcolsep}{0.8mm}
-\caption{倾斜停车位占比 \\
-Table~\ref{tab_slant}~Proportion of slanted parking slots.}
+\caption{各数据集倾斜停车位比例 $\alpha$ 对比统计 \\ Table~\ref{tab_slant} Slanted parking slot ratio ($\alpha$) comparison among datasets}
+\label{tab_slant}
 \begin{tabular}{lccccccccc}
 \toprule
  & \multicolumn{3}{c}{ps2.0\cite{zhang2018vision}} & \multicolumn{3}{c}{SNU\cite{do2020context}} & \multicolumn{3}{c}{Ours} \\\cmidrule{2-4}\cmidrule{5-7}\cmidrule{8-10}%
@@ -144,7 +145,7 @@ Table~\ref{tab_slant}~Proportion of slanted parking slots.}
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp2/pdf/sence.pdf}
-\caption{数据集示例图片 \\Fig~\ref{fig_crpsd}~Example images from the dataset}
+\caption{数据集示例图片，（a）ps2.0，（b）CRPS-D \\Fig~\ref{fig_crpsd}~Example images of the dataset, (a) ps2.0, (b) CRPS-D}
 \label{fig_crpsd}
 \end{figure}
 
@@ -171,7 +172,7 @@ Table~\ref{tab_slant}~Proportion of slanted parking slots.}
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp2/pdf/pipline.pdf}
-\caption{SS-PSD的整体架构\\Fig~\ref{fig_sspsd}~Overview of SS-PSD architecture}
+\caption{SS-PSD 整体架构示意图 \\ Fig \ref{fig_sspsd} The overall framework of the proposed SS-PSD}
 \label{fig_sspsd}
 \end{figure}
 
@@ -204,7 +205,7 @@ D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_
 \begin{figure}[!h]
 \centering
 \includegraphics[width=0.7\textwidth]{figures/chp2/pdf/vat.pdf}
-\caption{Adaptive-VAT 模块示意图\\Fig~\ref{fig_vat}~Overview of the Adaptive-VAT module}
+\caption{Adaptive-VAT 模块示意图\\Fig~\ref{fig_vat}~Schematic of the Adaptive-VAT module}
 \label{fig_vat}
 \end{figure}
 
@@ -230,7 +231,7 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 \begin{figure}[!h]
 \centering
 \includegraphics[width=0.8\textwidth]{figures/chp2/pdf/cgm.pdf}
-\caption{CGM 一致性约束示意图\\Fig~\ref{fig_cgm}~Overview of CGM consistency constraint}
+\caption{CGM 一致性约束示意图\\Fig~\ref{fig_cgm}~Schematic of the CGM consistency constraint}
 \label{fig_cgm}
 \end{figure}
 
@@ -285,8 +286,8 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 \begin{table}[!b]
 \centering
 \setlength{\tabcolsep}{4.5mm}
-\caption{不同标注比例下与开源SoTA方法对比（CPPS-D）\\
-Table~\ref{tab_crpsd}~Comparison with open-source SoTA methods under different label ratios (CPPS-D)}
+\caption{CRPS-D 数据集在不同标注比例下的性能对比\\
+Table~\ref{tab_crpsd}~Performance comparison on CRPS-D under various label ratios}
 \begin{tabular}{lccccc}
 \toprule
 Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2 \\
@@ -320,8 +321,8 @@ SS-PSD & \textbf{71.72\%} & \textbf{79.75\%} & \textbf{81.03\%} & \textbf{83.78\
 \begin{table}[!h]
 \centering
 \setlength{\tabcolsep}{4.5mm}
-\caption{不同标注比例下与开源SoTA方法对比（ps2.0）\\
-Table~\ref{tab_ps2}~Comparison with open-source SoTA methods under different label ratios (ps2.0)}
+\caption{ps2.0 数据集在不同标注比例下的性能对比\\
+Table~\ref{tab_ps2}~Performance comparison on ps2.0 under various label ratios}
 \begin{tabular}{lccccc}
 \toprule
 Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  \\
@@ -345,7 +346,7 @@ Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  \\
 	  \subfloat[ps2.0]{
         \includegraphics[width=0.4\linewidth]{figures/chp2/curve/curve_s1.jpg}}
     \label{5b}
-    \caption{与监督基线相比的改进情况 \\Fig~\ref{fig_curve}~ Improvements over the supervised baseline}
+    \caption{（a）CRPS-D与（b）ps2.0上相较于监督基线的性能提升对比 \\Fig~\ref{fig_curve}~ Performance improvement over supervised baselines on (a)CRPS-D and (b)ps2.0}
     \label{fig_curve} 
 \end{figure}
 
@@ -363,8 +364,8 @@ Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  \\
 \begin{table}[ht]
 \centering
 \setlength{\tabcolsep}{6mm}
-\caption{与近期方法的比较结果 \\
-Table~\ref{tab_recent}~Comparison results with recent methods.}
+\caption{与近期不同监督程度方法的对比结果 \\
+Table~\ref{tab_recent}~Comparison with recent methods under different supervision levels}
 \begin{tabular}{lcccc}
 \toprule
     方法 & 标签数 &  Precision & Recall & F1 \\
@@ -395,14 +396,14 @@ Table~\ref{tab_recent}~Comparison results with recent methods.}
     \begin{figure}[!h]
     \centering
     \includegraphics[width=1\linewidth]{figures/chp2/bar/ps.jpg}
-    \caption{SS-PSD 与 DMPR-PS 的性能比较（ps2.0数据集） \\Fig~\ref{fig_ps}~ Performance comparison of SS-PSD and DMPR-PS (ps2.0 dataset)}
+    \caption{ps2.0 数据集上 SS-PSD 与 DMPR-PS\cite{huang2019dmpr} 的性能对比 \\Fig~\ref{fig_ps}~ Comparison between SS-PSD and DMPR-PS\cite{huang2019dmpr} on the ps2.0 dataset}
     \label{fig_ps}
    \end{figure}
 
     \begin{figure}[!h]
     \centering
     \includegraphics[width=1\linewidth]{figures/chp2/bar/crps.jpg}
-    \caption{SS-PSD 与 DMPR-PS 的性能比较（CPRS-D数据集） \\Fig~\ref{fig_crps}~ Performance comparison of SS-PSD and DMPR-PS (CPRS-D dataset)}
+    \caption{CRPS-D 数据集上 SS-PSD 与 DMPR-PS\cite{huang2019dmpr} 的性能对比 \\Fig~\ref{fig_crps}~ Comparison between SS-PSD and DMPR-PS\cite{huang2019dmpr} on the CRPS-D dataset}
     \label{fig_crps}
    \end{figure}
 
@@ -416,8 +417,8 @@ Table~\ref{tab_recent}~Comparison results with recent methods.}
 
 \begin{table}[!h]
 \centering
-\caption{消融实验结果（1/12标注数据） \\
-Table~\ref{tab_ab}~Ablation study using the 1/12 labeled ratio}
+\caption{1/12 标注比例下的消融实验结果\\
+Table~\ref{tab_ab}~Ablation results with 1/12 labeled data}
 \begin{tabular}{cccccc}
 \toprule
    有监督基线 & MT & CGM 一致性  & Adaptive-VAT & $AP_{marking-point}$ & $AP_{parking-slot}$ \\
@@ -431,25 +432,25 @@ Table~\ref{tab_ab}~Ablation study using the 1/12 labeled ratio}
 \label{tab_ab}
 \end{table}
 
-（1）组件消融
-
 为进一步验证各组件的有效性，本节分别针对 CGM 一致性和 Adaptive-VAT 进行了更深入的消融分析：
 
+（1）CGM 一致性
 
-\textbf{CGM 一致性} \ 通过逐步去除 CGM 一致性的关键组件，本节深入剖析了其对性能的影响。具体而言，首先去除掩码组件得到 CG 一致性，接着去除置信度权重得到 C 一致性。从 表\ref{tab_ablation} 可以看出：
+通过逐步去除 CGM 一致性的关键组件，本节深入剖析了其对性能的影响。具体而言，首先去除掩码组件得到 CG 一致性，接着去除置信度权重得到 C 一致性。从 表\ref{tab_ablation} 可以看出：
 仅采用 C 一致性（对所有单元格施加相同约束）时，性能表现较差，停车位检测平均精度仅为 54.88\%；
 引入置信度权重（CG 一致性）后，性能得到显著提升，$AP_{parking-slot}$达到78.22\%；
 进一步加入掩码处理（CGM 一致性），$AP_{parking-slot}$进一步提升至 78.93\%，较 CG 一致性提升了 0.71 个百分点。
 
+（2）Adaptive-VAT
 
-\textbf{Adaptive-VAT} \ 若去除 Adaptive-VAT 的自适应性，其性能会降至传统的 S-VAT\cite{tarvainen2017mean}或 T-VAT\cite{liu2022perturbed}水平。表 \ref{tab_ablation} 的结果显示：
+若去除 Adaptive-VAT 的自适应性，其性能会降至传统的 S-VAT\cite{tarvainen2017mean}或 T-VAT\cite{liu2022perturbed}水平。表 \ref{tab_ablation} 的结果显示：
 使用S-VAT 的$AP_{parking-slot}$为 78.87\%，T-VAT 略高，达到 79.53\%。
 应用 Adaptive-VAT 后，$AP_{parking-slot}$进一步提升至 79.75\%，展现出其在 S-VAT 和 T-VAT 之间自适应选择更优策略的能力。
 
 \begin{table}[!h]
 \centering
-\caption{对CGM 一致性和Adaptive-VAT的消融实验 \\
-Table~\ref{tab_ablation}~Ablation study of various components on CGM Consistency and Adaptive-VAT}
+\caption{CGM 一致性与 Adaptive-VAT 内部策略消融实验 \\
+Table~\ref{tab_ablation}~Ablation of strategy variants for CGM consistency and Adaptive-VAT}
 \setlength{\tabcolsep}{10mm}
 \begin{tabular}{lcc}
 \toprule
@@ -467,18 +468,18 @@ Table~\ref{tab_ablation}~Ablation study of various components on CGM Consistency
 \label{tab_ablation}
 \end{table}
 
-
-（2）超参数选择
+\subsection{超参数选择}
 
 本节讨论两个关键超参数的值选择：置信度阈值 ($\tau$) 和干扰强度 ($eps$)，所有实验均使用 1/12 标注比例在 CRPS-D 数据集上训练。
 
-\textbf{置信度阈值 ($\tau$)} \ 将置信度阈值在 0 到 1 之间以 0.1 为步长进行变化，实验结果如表 \ref{tab_confidence} 所示。从表中可以看出，当阈值为 0.9 时性能最优，停车位检测平均精度达到 79.75\%。这与FixMatch\cite{sohn2020fixmatch}方法中的结论相符（该方法通过选取置信度更高的标签来提升伪标签的准确率）。因此，本文最终选择了较高的阈值（$\tau$ = 0.9）。
+（1）置信度阈值 ($\tau$)
+
+将置信度阈值在 0 到 1 之间以 0.1 为步长进行变化，实验结果如表 \ref{tab_confidence} 所示。从表中可以看出，当阈值为 0.9 时性能最优，停车位检测平均精度达到 79.75\%。这与FixMatch\cite{sohn2020fixmatch}方法中的结论相符（该方法通过选取置信度更高的标签来提升伪标签的准确率）。因此，本文最终选择了较高的阈值（$\tau$ = 0.9）。
 
 \begin{table}[!h]
 \centering
 \setlength{\tabcolsep}{8mm}
-\caption{不同置信度阈值的实验结果\\
-Table~\ref{tab_confidence}~Results of different confidence thresholds}
+\caption{置信度阈值 $\tau$ 的敏感性分析 \\ Table \ref{tab_confidence} Sensitivity analysis of confidence threshold $\tau$}
     \begin{tabular}{cccc}
     \toprule
     Threshold ($\tau$) & $AP_{marking-point}$ & $AP_{parking-slot}$ & 训练轮数\\
@@ -497,13 +498,14 @@ Table~\ref{tab_confidence}~Results of different confidence thresholds}
 \label{tab_confidence}
 \end{table} 
 
-\textbf{干扰强度 ($eps$)} \ 为证明本文所提 Adaptive-VAT 算法在各类干扰强度下均能展现优异性能，本文对干扰强度进行了调整，分别采用\(eps\) = 10、1 和 0.1这几个取值。表 \ref{tab_eps} 的结果显示，与 S-VAT 和 T-VAT 相比，本文提出的 Adaptive-VAT 方法在不同干扰强度下均表现更优。基于实验结果，本文最终选择$eps = 0.1$，此时停车位检测平均精度达到 79.75\%。
+（2）干扰强度 ($eps$)
+
+为证明本文所提 Adaptive-VAT 算法在各类干扰强度下均能展现优异性能，本文对干扰强度进行了调整，分别采用\(eps\) = 10、1 和 0.1这几个取值。表 \ref{tab_eps} 的结果显示，与 S-VAT 和 T-VAT 相比，本文提出的 Adaptive-VAT 方法在不同干扰强度下均表现更优。基于实验结果，本文最终选择$eps = 0.1$，此时停车位检测平均精度达到 79.75\%。
 
 \begin{table}[!h]
 \centering
 \setlength{\tabcolsep}{4mm}
-\caption{不同干扰强度的实验结果\\
-Table~\ref{tab_eps}~Results of different disturbance intensities}
+\caption{不同干扰强度下各 VAT 变体的性能对比 \\ Table \ref{tab_eps} Performance comparison of VAT variants under different disturbance intensities}
 \begin{tabular}{ccccccc}
 \toprule
  & \multicolumn{3}{@{}c@{}}{$AP_{marking-point}$} & \multicolumn{3}{@{}c@{}}{$AP_{parking-slot}$} \\\cmidrule{2-4}\cmidrule{5-7}%
@@ -517,18 +519,18 @@ Table~\ref{tab_eps}~Results of different disturbance intensities}
 \label{tab_eps}
 \end{table}
 
-\begin{figure}[!h]
+\begin{figure}[!b]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp2/pdf/result.pdf}
-\caption{不同场景的可视化结果 \\Fig~\ref{fig_result}~Visualized results of different scenes}
+\caption{不同复杂场景下的可视化检测结果 \\Fig~\ref{fig_result}~Qualitative visualization results across various challenging scenes}
 \label{fig_result}
 \end{figure}
 
 \begin{table}[!h]
 \centering
 \setlength{\tabcolsep}{6mm}
-\caption{分场景子测试集的实验结果\\
-Table~\ref{tab_test}~Evaluation results on the sub-test sets}
+\caption{复杂场景子集的细分性能评估与对比\\
+Table~\ref{tab_test}~Robustness evaluation on various scene-specific sub-test sets}
 \begin{tabular}{lcccc}
 \toprule
  \multicolumn{2}{c}{} & \multicolumn{2}{c}{$AP_{parking-slot}$} \\ \cmidrule{3-4}%

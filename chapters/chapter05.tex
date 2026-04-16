@@ -23,9 +23,11 @@
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp4/pipline_3.pdf}
-\caption{MTF-PSD 方法示意图 \\Fig~\ref{fig_pip3}~Overview of MTF-PSD method}
+\caption{MTF-PSD 整体架构示意图 \\ Fig \ref{fig_pip3} The overall framework of the proposed MTF-PSD}
 \label{fig_pip3}
 \end{figure}
+
+
 
 \subsection{跨帧自注意力机制}
 
@@ -181,8 +183,7 @@ r, & (x,y) \in \Omega_{\text{occ}} \\
 \begin{table}[!h]
 \centering
 \setlength{\tabcolsep}{8mm}
-\caption{ps2.0 数据集上的检测性能对比 \\
-Table~\ref{tab_3ps2}~Comparison of detection performance of different methods on ps2.0 dataset}
+\caption{ps2.0 数据集上不同方法的检测性能对比 \\ Table \ref{tab_3ps2} Performance comparison with different methods on the ps2.0 dataset}
 \begin{tabular}{lccccc}
 \toprule
     方法 &  Precision & Recall &  $AP$\\
@@ -222,7 +223,7 @@ Table~\ref{tab_3ps2}~Comparison of detection performance of different methods on
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp4/pstd.pdf}
-\caption{PSTD 数据集部分示例图片 \\Fig~\ref{fig_pstd} Sample images from the PSTD dataset}
+\caption{PSTD 数据集中的代表性图像序列示例 \\Fig~\ref{fig_pstd} Representative image sequences from the PSTD dataset}
 \label{fig_pstd}
 \end{figure}
 
@@ -239,8 +240,8 @@ PSTD 数据集共包含 8990 组连续帧样本，其中 7192 组用于训练，
 \begin{table}[!b]
 \centering
 \setlength{\tabcolsep}{5mm}
-\caption{与开源SoTA方法对比\\
-Table~\ref{tab_pstc} Comparison with open-source SoTA methods}
+\caption{PSTD 时序数据集上的基准测试结果\\
+Table~\ref{tab_pstc} Benchmark results of different methods on the PSTD}
 \begin{tabular}{lcccc}
 \toprule
     方法 &  Precision & Recall &  $AP$ & 训练轮数\\
@@ -263,7 +264,7 @@ Table~\ref{tab_pstc} Comparison with open-source SoTA methods}
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp4/res_3.pdf}
-\caption{PSTD 可视化停车位检测结果 \\Fig~\ref{fig_res3}~Visualization results of parking slot detection under PSTD}
+\caption{PSTD 可视化检测示例 \\Fig~\ref{fig_res3}~Detection examples on the PSTD dataset}
 \label{fig_res3}
 \end{figure}
 
@@ -274,11 +275,11 @@ Table~\ref{tab_pstc} Comparison with open-source SoTA methods}
 
 为深入分析各模块对多帧时序停车位检测性能的贡献，本文开展了系统的消融实验。表 \ref{tab_3ab} 给出了消融实验结果，实验以单帧停车位检测模型作为基线，在此基础上逐步引入跨帧自注意力、动态结构感知时序融合以及时序鲁棒增强模块，以定量评估各组件的有效性。
 
-\begin{table*}[!h]
+\begin{table}[!h]
 \centering
 \setlength{\tabcolsep}{2mm}
-\caption{消融实验结果 \\
-Table~\ref{tab_3ab} Results of ablation study}
+\caption{时序模块逐步集成对检测性能的影响 \\
+Table~\ref{tab_3ab} Performance contribution of incremental temporal modules}
 \small
 \begin{tabular}{ccccc}
 \toprule
@@ -291,7 +292,7 @@ Table~\ref{tab_3ab} Results of ablation study}
 \bottomrule
 \end{tabular}
 \label{tab_3ab}
-\end{table*}
+\end{table}
 
 
 实验结果表明，当仅使用单帧模型时，$AP$ 为 89.96\%。在此基础上引入跨帧自注意力模块后，模型性能显著提升至 91.46\%，实现了 1.50\% 的 $AP$ 增益。这一结果验证了跨帧自注意力机制的有效性：通过显式建模相邻帧之间的特征关联关系，模型能够充分利用时序上下文信息，显著提升停车位结构的整体检测精度。
@@ -305,7 +306,7 @@ Table~\ref{tab_3ab} Results of ablation study}
 
 \subsection{推理速度实验}
 
-在实际自动泊车系统中，推理效率是衡量算法实用性的关键指标。为此，本文对比了 MTF-PSD 与三种代表性方法在 GPU 平台上的单帧推理时间，结果如表 \ref{tab_infer} 所示。
+在实际自动泊车系统中，推理效率是衡量算法实用性的关键指标。为此，本文在 ps2.0 数据集上对比了 MTF-PSD 与若干代表性方法在 GPU 平台上的单帧推理时间，结果如表 \ref{tab_infer} 所示。
 从实验结果可以看出，DMPR-PS 在 Nvidia Titan Xp 上的推理时间为 12ms，表现出较高的推理效率；GCN 方法在相同平台上的推理时间为 25ms，由于引入了复杂的图结构建模与节点关系推理，推理开销有所增加；BEV-PolyNet 在更高级的 Nvidia 4090 平台上的推理时间为 24ms。相比之下，MTF-PSD 在 Nvidia 2080Ti 平台上的推理时间为 16ms，整体处于合理区间。
 
 尽管不同方法的测试平台存在一定差异，但从结果可以看出，MTF-PSD 在引入时序特征建模与结构感知机制的前提下，仍能够保持较为可控的推理开销。与基于图结构的 GCN 方法相比，MTF-PSD 在性能相当的硬件平台上（Titan Xp vs 2080Ti）推理时间更短；相较于纯单帧方法 DMPR-PS，推理时间虽有小幅增加，但换来了更强的时序一致性建模能力与整体检测性能提升（AP 提升 2.01\%）。
@@ -314,9 +315,7 @@ Table~\ref{tab_3ab} Results of ablation study}
 \begin{table}[!h]
 \centering
 \setlength{\tabcolsep}{10mm}
-\caption{ps2.0数据集 推理效率对比 \\
-Table~\ref{tab_infer}~Comparison of inference efficiency}
-\setlength{\tabcolsep}{10mm}
+\caption{不同方法的推理效率对比分析 \\ Table \ref{tab_infer} Comparison of inference efficiency among different methods}
 \begin{tabular}{lcc}
 \toprule
    模型 & GPU型号 & 推理速度 \\

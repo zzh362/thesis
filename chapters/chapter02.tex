@@ -11,7 +11,7 @@
 %\setlength{\abovecaptionskip}{-0.2cm} %调整图片caption与正文之间的间距，table同理。可自己调整。
   \centering
   \includegraphics[width=1\linewidth]{figures/chp1/pipline.pdf}
-  \caption{停车位检测的典型流程\cite{wong2023review} \\Fig~\ref{fig_pip1}~General flow for parking slot detection\cite{wong2023review}} 
+  \caption{停车位检测的典型流程\cite{wong2023review} \\Fig~\ref{fig_pip1}~General flow of parking slot detection\cite{wong2023review}} 
   \label{fig_pip1}
 \end{figure}
 
@@ -37,11 +37,10 @@ PSV 数据集由Wu等人\cite{wu2018vh}提出，研究团队通过智能电动�
 
 SNU 数据集由首尔大学 Do和Choi\cite{do2020context}发布，包含 18299 张训练图像和 4518 张测试图像，分辨率均为$768 \times 256$像素。该数据集旨在提供更丰富的场景和多样化的车位类型，作为 ps2.0 数据集的替代方案。在数据采集过程中，研究团队将鱼眼摄像头安装在车辆侧面，采集到的图像未进行拼接处理，允许检测算法直接处理单个摄像头的原始图像，无需进行复杂的图像拼接操作。SNU 数据集是 ps2.0 的一种替代方案，但其在停车位检测研究中的应用仍相对有限。
 
-\begin{figure}[!h] % use float package if you want it here
-%\setlength{\abovecaptionskip}{-0.2cm} %调整图片caption与正文之间的间距，table同理。可自己调整。
+\begin{figure}[!h] 
   \centering
   \includegraphics[width=0.8\linewidth]{figures/chp1/datasets.png}
-  \caption{数据集使用分布情况\cite{wong2023review} \\Fig~\ref{fig_dataset}~Dataset distribution\cite{wong2023review}}
+  \caption{数据集分布\cite{wong2023review}，（a）数据集使用情况，（b）各方法的数据集使用情况 \\Fig~\ref{fig_dataset}~Dataset distribution\cite{wong2023review}, (a) dataset usage, (b) dataset usage per method}
   \label{fig_dataset}
 \end{figure}
 
