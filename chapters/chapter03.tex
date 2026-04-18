@@ -3,7 +3,7 @@
 \label{cha:chap2}
 
 \section{研究动机}
-自动泊车技术作为自动驾驶领域的关键组成部分，其性能直接影响驾驶安全性与便利性。停车位检测作为自动泊车系统的感知起点，是实现准确泊车规划的前提。环视摄像头系统因能提供车辆周围环境的全景鸟瞰图，已成为停车位检测的主流传感器方案。传统停车位检测方法依赖手工设计的几何特征（如拐角、线条等），在复杂场景下精度有限，尤其在几何特征不明显的区域表现不佳。
+自动泊车技术作为自动驾驶领域的关键组成部分，其性能直接影响驾驶安全性与便利性。停车位检测作为自动泊车系统的感知起点，是实现准确泊车规划的前提。环视摄像头系统因能提供车辆周围环境的全景鸟瞰图，已成为停车位检测的主流传感器方案。传统停车位检测方法依赖手工设计的几何特征（如拐角、线条等），在复杂场景下精度有限，尤其在几何特征不明显的区域表现不佳~\cite{shengli2024}。
 
 随着深度学习技术的发展，基于学习的停车位检测方法已逐步取代传统方法。DeepPS\cite{zhang2018vision}及其配套数据集ps2.0的出现，标志着该领域正式进入深度学习时代。后续研究通过标记点回归\cite{huang2019dmpr}、图神经网络\cite{min2021attentional}和Transformer\cite{bui2023transformer}等技术，不断提升检测精度，在ps2.0数据集上已达到99\%以上的查准率。然而，真实停车场景的复杂性远超基准数据集，现有方法在实际应用中往往难以复现实验室性能。因此，构建更贴近真实场景、规模更大、挑战性更强的数据集，成为推动该领域发展的关键。
 
@@ -24,7 +24,7 @@
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp2/pdf/equip.pdf}
-\caption{360度全景环视系统 \\Fig~\ref{fig_equip}~360-degree surround view system}
+\caption{360度全景环视系统 \\Figure~\ref{fig_equip}~360-degree surround view system}
 \label{fig_equip}
 \end{figure}
 
@@ -145,7 +145,7 @@ Table~\ref{tab_sence}~Scene distribution in the test set}
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp2/pdf/sence.pdf}
-\caption{数据集示例图片，（a）ps2.0，（b）CRPS-D \\Fig~\ref{fig_crpsd}~Example images of the dataset, (a) ps2.0, (b) CRPS-D}
+\caption{数据集示例图片，（a）ps2.0，（b）CRPS-D \\Figure~\ref{fig_crpsd}~Example images of the dataset, (a) ps2.0, (b) CRPS-D}
 \label{fig_crpsd}
 \end{figure}
 
@@ -172,7 +172,7 @@ Table~\ref{tab_sence}~Scene distribution in the test set}
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp2/pdf/pipline.pdf}
-\caption{SS-PSD 整体架构示意图 \\ Fig \ref{fig_sspsd} The overall framework of the proposed SS-PSD}
+\caption{SS-PSD 整体架构示意图 \\ Figure \ref{fig_sspsd} The overall framework of the proposed SS-PSD}
 \label{fig_sspsd}
 \end{figure}
 
@@ -205,7 +205,7 @@ D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_
 \begin{figure}[!h]
 \centering
 \includegraphics[width=0.7\textwidth]{figures/chp2/pdf/vat.pdf}
-\caption{Adaptive-VAT 模块示意图\\Fig~\ref{fig_vat}~Schematic of the Adaptive-VAT module}
+\caption{Adaptive-VAT 模块示意图\\Figure~\ref{fig_vat}~Schematic of the Adaptive-VAT module}
 \label{fig_vat}
 \end{figure}
 
@@ -231,7 +231,7 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 \begin{figure}[!h]
 \centering
 \includegraphics[width=0.8\textwidth]{figures/chp2/pdf/cgm.pdf}
-\caption{CGM 一致性约束示意图\\Fig~\ref{fig_cgm}~Schematic of the CGM consistency constraint}
+\caption{CGM 一致性约束示意图 \\Figure~\ref{fig_cgm}~Schematic of the CGM consistency constraint}
 \label{fig_cgm}
 \end{figure}
 
@@ -346,7 +346,7 @@ Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  \\
 	  \subfloat[ps2.0]{
         \includegraphics[width=0.4\linewidth]{figures/chp2/curve/curve_s1.jpg}}
     \label{5b}
-    \caption{（a）CRPS-D与（b）ps2.0上相较于监督基线的性能提升对比 \\Fig~\ref{fig_curve}~ Performance improvement over supervised baselines on (a)CRPS-D and (b)ps2.0}
+    \caption{（a）CRPS-D与（b）ps2.0上相较于监督基线的性能提升对比 \\Figure~\ref{fig_curve}~ Performance improvement over supervised baselines on (a)CRPS-D and (b)ps2.0}
     \label{fig_curve} 
 \end{figure}
 
@@ -396,14 +396,14 @@ Table~\ref{tab_recent}~Comparison with recent methods under different supervisio
     \begin{figure}[!h]
     \centering
     \includegraphics[width=1\linewidth]{figures/chp2/bar/ps.jpg}
-    \caption{ps2.0 数据集上 SS-PSD 与 DMPR-PS\cite{huang2019dmpr} 的性能对比 \\Fig~\ref{fig_ps}~ Comparison between SS-PSD and DMPR-PS\cite{huang2019dmpr} on the ps2.0 dataset}
+    \caption{ps2.0 数据集上 SS-PSD 与 DMPR-PS\cite{huang2019dmpr} 的性能对比 \\Figure~\ref{fig_ps}~ Comparison between SS-PSD and DMPR-PS\cite{huang2019dmpr} on the ps2.0 dataset}
     \label{fig_ps}
    \end{figure}
 
     \begin{figure}[!h]
     \centering
     \includegraphics[width=1\linewidth]{figures/chp2/bar/crps.jpg}
-    \caption{CRPS-D 数据集上 SS-PSD 与 DMPR-PS\cite{huang2019dmpr} 的性能对比 \\Fig~\ref{fig_crps}~ Comparison between SS-PSD and DMPR-PS\cite{huang2019dmpr} on the CRPS-D dataset}
+    \caption{CRPS-D 数据集上 SS-PSD 与 DMPR-PS\cite{huang2019dmpr} 的性能对比 \\Figure~\ref{fig_crps}~ Comparison between SS-PSD and DMPR-PS\cite{huang2019dmpr} on the CRPS-D dataset}
     \label{fig_crps}
    \end{figure}
 
@@ -522,7 +522,7 @@ Table~\ref{tab_ablation}~Ablation of strategy variants for CGM consistency and A
 \begin{figure}[!b]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp2/pdf/result.pdf}
-\caption{不同复杂场景下的可视化检测结果 \\Fig~\ref{fig_result}~Qualitative visualization results across various challenging scenes}
+\caption{不同复杂场景下的可视化检测结果 \\Figure~\ref{fig_result}~Qualitative visualization results across various challenging scenes}
 \label{fig_result}
 \end{figure}
 

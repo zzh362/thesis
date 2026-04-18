@@ -23,7 +23,7 @@
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp4/pipline_3.pdf}
-\caption{MTF-PSD 整体架构示意图 \\ Fig \ref{fig_pip3} The overall framework of the proposed MTF-PSD}
+\caption{MTF-PSD 整体架构示意图 \\Figure~\ref{fig_pip3} The overall framework of the proposed MTF-PSD}
 \label{fig_pip3}
 \end{figure}
 
@@ -46,7 +46,7 @@ Q = \phi_q(F_t), \
 K = \phi_k(F_{t-1}), \
 V = \phi_v(F_{t-1}),
 \end{equation}
-其中 $\phi_q(\cdot)$、$\phi_k(\cdot)$ 和 $\phi_v(\cdot)$ 为可学习的线性投影函数。为提升模型对不同语义子空间的建模能力，引入多头注意力机制：将通道维度划分为 $N$ 个注意力头，并将空间维度展开为 $HW$，得到：
+其中 $\phi_q(\cdot)$、$\phi_k(\cdot)$ 和 $\phi_v(\cdot)$ 为可学习的线性投影函数。为提升模型对不同语义子空间的建模能力，引入多头注意力机制~\cite{vaswani2017attention}：将通道维度划分为 $N$ 个注意力头，并将空间维度展开为 $HW$，得到：
 \begin{equation}
 Q, K, V \in \mathbb{R}^{B \times N \times \frac{C}{N} \times HW}.
 \end{equation}
@@ -84,7 +84,7 @@ $F_{t}^{\text{attn}} \in \mathbb{R}^{B \times C \times H \times W}$。
 动态融合模块的设计包含以下关键步骤：
 
 
-（1）首先，从当前帧特征中提取全局通道权重，用于刻画不同语义通道在当前时刻的重要程度。具体而言，通过全局平均池化（Global Average Pooling，GAP）将空间维度信息压缩，得到通道级全局描述向量：
+（1）首先，从当前帧特征中提取全局通道权重，用于刻画不同语义通道在当前时刻的重要程度。具体而言，通过全局平均池化（Global Average Pooling，GAP~\cite{lin2013network}）将空间维度信息压缩，得到通道级全局描述向量：
 \begin{equation}
 g = \text{GAP}(F_t).
 \end{equation}
@@ -223,7 +223,7 @@ r, & (x,y) \in \Omega_{\text{occ}} \\
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp4/pstd.pdf}
-\caption{PSTD 数据集中的代表性图像序列示例 \\Fig~\ref{fig_pstd} Representative image sequences from the PSTD dataset}
+\caption{PSTD 数据集中的代表性图像序列示例 \\Figure~\ref{fig_pstd} Representative image sequences from the PSTD dataset}
 \label{fig_pstd}
 \end{figure}
 
@@ -264,7 +264,7 @@ Table~\ref{tab_pstc} Benchmark results of different methods on the PSTD}
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp4/res_3.pdf}
-\caption{PSTD 可视化检测示例 \\Fig~\ref{fig_res3}~Detection examples on the PSTD dataset}
+\caption{PSTD 可视化检测示例 \\Figure~\ref{fig_res3}~Detection examples on the PSTD dataset}
 \label{fig_res3}
 \end{figure}
 
@@ -306,7 +306,7 @@ Table~\ref{tab_3ab} Performance contribution of incremental temporal modules}
 
 \subsection{推理速度实验}
 
-在实际自动泊车系统中，推理效率是衡量算法实用性的关键指标。为此，本文在 ps2.0 数据集上对比了 MTF-PSD 与若干代表性方法在 GPU 平台上的单帧推理时间，结果如表 \ref{tab_infer} 所示。
+在实际自动泊车系统中，推理效率是衡量算法实用性的关键指标~\cite{wei2025real}。为此，本文在 ps2.0 数据集上对比了 MTF-PSD 与若干代表性方法在 GPU 平台上的单帧推理时间，结果如表 \ref{tab_infer} 所示。
 从实验结果可以看出，DMPR-PS 在 Nvidia Titan Xp 上的推理时间为 12ms，表现出较高的推理效率；GCN 方法在相同平台上的推理时间为 25ms，由于引入了复杂的图结构建模与节点关系推理，推理开销有所增加；BEV-PolyNet 在更高级的 Nvidia 4090 平台上的推理时间为 24ms。相比之下，MTF-PSD 在 Nvidia 2080Ti 平台上的推理时间为 16ms，整体处于合理区间。
 
 尽管不同方法的测试平台存在一定差异，但从结果可以看出，MTF-PSD 在引入时序特征建模与结构感知机制的前提下，仍能够保持较为可控的推理开销。与基于图结构的 GCN 方法相比，MTF-PSD 在性能相当的硬件平台上（Titan Xp vs 2080Ti）推理时间更短；相较于纯单帧方法 DMPR-PS，推理时间虽有小幅增加，但换来了更强的时序一致性建模能力与整体检测性能提升（AP 提升 2.01\%）。

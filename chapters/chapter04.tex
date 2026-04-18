@@ -26,7 +26,7 @@
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp3/pipline_2.pdf}
-\caption{SAKM-PSD 整体架构示意图 \\Fig~\ref{fig_pip2}~The overall framework of the proposed SAKM-PSD}
+\caption{SAKM-PSD 整体架构示意图 \\Figure~\ref{fig_pip2}~The overall framework of the proposed SAKM-PSD}
 \label{fig_pip2}
 \end{figure}
 
@@ -47,7 +47,7 @@
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp3/sa.pdf}
-\caption{结构感知 CutMix 策略示意图 \\Fig~\ref{fig_cutmix}~Schematic of the proposed Structure-Aware CutMix strategy}
+\caption{结构感知 CutMix 策略示意图 \\Figure~\ref{fig_cutmix}~Schematic of the proposed Structure-Aware CutMix strategy}
 \label{fig_cutmix}
 \end{figure}
 
@@ -96,7 +96,7 @@ SA-CutMix 从结构保持与信息干扰两个角度出发：一方面保留关�
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp3/agi.pdf}
-\caption{注意力引导插值（AGI）模块示意图 \\Fig~\ref{fig_agi}~Schematic of the Attention-Guided Interpolation (AGI)}
+\caption{注意力引导插值（AGI）模块示意图 \\Figure~\ref{fig_agi}~Schematic of the Attention-Guided Interpolation (AGI)}
 \label{fig_agi}
 \end{figure}
 
@@ -185,7 +185,7 @@ c.mask 中标记出参与训练的位置，用于规避空区域的梯度干扰�
 
 （2）多backbone一致性对比实验
 
-为进一步增强对比实验的充分性，本文在上一章构建的 CRPS-D 数据集上对所提方法进行了深入评估。鉴于目前大多数端到端停车位检测方法尚未公开训练代码或预训练模型，难以在统一平台和设置下在 CRPS-D 数据集上实现全面复现与公平对比。在已公开的方法中，仅有GCN\cite{min2021attentional}提供了完整的训练框架，并支持多种主干网络（ResNet18、ResNet50、Darknet、VGG16），具备良好的可复现性与扩展性。因此，本文选取 GCN 作为对比基线，在保持数据集、损失函数、训练策略和超参数一致的前提下，基于相同的四种主干网络在 CRPS-D 数据集上进行了复现训练，并与 SAKM-PSD 进行了系统的对比实验，从而在统一设置下评估不同方法在多种特征提取能力下的性能表现。
+为进一步增强对比实验的充分性，本文在上一章构建的 CRPS-D 数据集上对所提方法进行了深入评估。鉴于目前大多数端到端停车位检测方法尚未公开训练代码或预训练模型，难以在统一平台和设置下在 CRPS-D 数据集上实现全面复现与公平对比。在已公开的方法中，仅有GCN\cite{min2021attentional}提供了完整的训练框架，并支持多种主干网络（ResNet18~\cite{kaiming2016deep}、ResNet50~\cite{kaiming2016deep}、Darknet~\cite{redmon2017yolo9000}、VGG16~\cite{simonyan2014very}），具备良好的可复现性与扩展性。因此，本文选取 GCN 作为对比基线，在保持数据集、损失函数、训练策略和超参数一致的前提下，基于相同的四种主干网络在 CRPS-D 数据集上进行了复现训练，并与 SAKM-PSD 进行了系统的对比实验，从而在统一设置下评估不同方法在多种特征提取能力下的性能表现。
 
 \begin{table}[!h]
 \centering
@@ -247,7 +247,7 @@ Table~\ref{tab_2crps}~Performance comparison between SAKM-PSD and GCN\cite{min20
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp3/result_2.pdf}
-\caption{代表性场景下的可视化检测性能展示 \\Fig~\ref{fig_res2}~Visualized detection performance in representative scenarios}
+\caption{代表性场景下的可视化检测性能展示 \\Figure~\ref{fig_res2}~Visualized detection performance in representative scenarios}
 \label{fig_res2}
 \end{figure}
 

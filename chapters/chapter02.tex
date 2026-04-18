@@ -11,7 +11,7 @@
 %\setlength{\abovecaptionskip}{-0.2cm} %调整图片caption与正文之间的间距，table同理。可自己调整。
   \centering
   \includegraphics[width=1\linewidth]{figures/chp1/pipline.pdf}
-  \caption{停车位检测的典型流程\cite{wong2023review} \\Fig~\ref{fig_pip1}~General flow of parking slot detection\cite{wong2023review}} 
+  \caption{停车位检测的典型流程\cite{wong2023review} \\Figure~\ref{fig_pip1}~General flow of parking slot detection\cite{wong2023review}} 
   \label{fig_pip1}
 \end{figure}
 
@@ -40,7 +40,7 @@ SNU 数据集由首尔大学 Do和Choi\cite{do2020context}发布，包含 18299 
 \begin{figure}[!h] 
   \centering
   \includegraphics[width=0.8\linewidth]{figures/chp1/datasets.png}
-  \caption{数据集分布\cite{wong2023review}，（a）数据集使用情况，（b）各方法的数据集使用情况 \\Fig~\ref{fig_dataset}~Dataset distribution\cite{wong2023review}, (a) dataset usage, (b) dataset usage per method}
+  \caption{数据集分布\cite{wong2023review}，（a）数据集使用情况，（b）各方法的数据集使用情况 \\Figure~\ref{fig_dataset}~Dataset distribution\cite{wong2023review}, (a) dataset usage, (b) dataset usage per method}
   \label{fig_dataset}
 \end{figure}
 
@@ -49,7 +49,7 @@ SNU 数据集由首尔大学 Do和Choi\cite{do2020context}发布，包含 18299 
 
 \section{模型评估指标}
 
-在停车位检测研究中，传统评估指标多采用查准率（Precision）和查全率（Recall）。然而，这两个指标对阈值选择较为敏感，不同的阈值设置可能会对评估结果产生显著影响，从而降低评估的可靠性。为了提供更全面、更稳定的评估，本文采用平均精度（Average Precision, AP）作为主要评估指标，具体应用\textit{PASCAL VOC 2010}中的全点插值方法，其计算方式如下：
+在停车位检测研究中，传统评估指标多采用查准率（Precision）和查全率（Recall）。然而，这两个指标对阈值选择较为敏感，不同的阈值设置可能会对评估结果产生显著影响，从而降低评估的可靠性。为了提供更全面、更稳定的评估，本文采用平均精度（Average Precision, AP）作为主要评估指标，具体应用 PASCAL VOC 2010~\cite{everingham2010pascal}中的全点插值方法，其计算方式如下：
 
 \begin{equation}
 AP = \sum \Big((Recall_{j+1}-Recall_{j}) \times Precision_{j+1} \Big),
