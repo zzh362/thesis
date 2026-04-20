@@ -13,7 +13,7 @@
 
 对于这一数据标注瓶颈，半监督学习为停车位检测提供了新的解决思路。半监督学习通过利用未标注数据辅助训练，可有效降低对人工标注的依赖，已在目标检测等任务中展现出良好潜力。然而，停车位检测的结构化特性和关键点稀疏分布，给半监督学习带来独特挑战：如何在保证结构一致性的同时有效利用未标注数据，尚缺乏系统性研究。
 
-针对这一问题，本文提出了首个停车位检测半监督学习方法（Semi-Supervised Parking Slot Detection，SS-PSD）。SS-PSD 基于教师-学生框架（Teacher-Student\cite{tarvainen2017mean}），融合了置信度引导掩码（CGM）一致性约束和自适应特征扰动机制（Adaptive-VAT）。其中，教师模型通过学生模型参数的指数移动平均（EMA\cite{tarvainen2017mean}）生成，利用一致性正则化引导学生模型学习。为避免强制错误预测保持一致的问题，本文引入可训练的置信度图为不同区域分配权重，并对低置信度区域进行掩码处理，构建置信度引导的掩码一致性（Confidence-Guided Mask，CGM）约束。此外，为增强学生模型的鲁棒性，本文设计了 Adaptive-VAT 自适应特征扰动机制，根据教师与学生模型对扰动的鲁棒性，选择性生成更具挑战性的对抗噪声，促进学生模型学习更稳定的特征表示。
+针对这一问题，本文提出了首个停车位检测半监督学习方法（Semi-Supervised Parking Slot Detection，SS-PSD）。SS-PSD 基于教师-学生框架（Teacher-Student\cite{tarvainen2017mean}），融合了置信度引导掩码（CGM）一致性约束和自适应特征扰动机制（Adaptive-VAT）。其中，教师模型通过学生模型参数的指数移动平均（EMA\cite{tarvainen2017mean}）生成，利用一致性正则化引导学生模型学习。同时，为避免强制错误预测保持一致的问题，本文引入可训练的置信度图为不同区域分配权重，并对低置信度区域进行掩码处理，构建置信度引导的掩码一致性（Confidence-Guided Mask，CGM）约束。此外，为增强学生模型的鲁棒性，本文设计了 Adaptive-VAT 自适应特征扰动机制，根据教师与学生模型对扰动的鲁棒性，选择性生成更具挑战性的对抗噪声，促进学生模型学习更稳定的特征表示。
 
 综上，本章从数据构建与学习范式两方面展开研究：
 
@@ -117,7 +117,7 @@ Table~\ref{tab_sence}~Scene distribution in the test set}
 
 （3）场景分析
 
-为全面覆盖真实世界的复杂泊车环境，CRPS-D 数据集细分为八个场景子集，包括“室内弱光、室内强光、室外正常日光、室外雨天、室外阴影、室外夜晚、倾斜车位和受损车位“等多样化场景。
+为全面覆盖真实世界的复杂泊车环境，CRPS-D 数据集细分为八个场景子集，分别为“室内弱光”、“室内强光”、“室外正常日光”、“室外雨天”、“室外阴影”、“室外夜晚”、“倾斜车位”和“受损车位”。
 从表 \ref{tab_sence} 可以看出，CRPS-D 在场景覆盖广度上实现了显著突破：不仅新增了室外夜晚和受损车位等挑战性场景，填补了现有数据集在极端条件下的空白，还在各细分场景的样本数量上实现了量级提升。
 这种多样化的场景覆盖和充足的样本数量，使得 CRPS-D 能够更全面地模拟真实世界的泊车环境，为模型训练提供更丰富的场景变体，有助于提升模型在复杂场景下的鲁棒性。
 图 \ref{fig_crpsd} 展示了各场景的示例图像，直观体现了 CRPS-D 更贴近真实泊车场景的特点。
@@ -178,7 +178,7 @@ Table~\ref{tab_sence}~Scene distribution in the test set}
 
 \subsection{问题定义}
 
-给定数据集后，本文随机选取部分带标签数据组成有标签集\(\mathcal{D}_{L}=\{({\textbf{x}}_{l},{\textbf{y}}_{l})\}\)，剩余部分作为无标签集\(\mathcal{D}_{U}=\{({\textbf{x}}_{u})\}\)。对于尺寸为\(512\times512\)的图像\(\textbf{x}_{l}\)及其标签\(\textbf{y}_{l}\)，模型的目标是预测特征图\(\mathbb{R} \in \mathcal{S}\times \mathcal{S} \times \mathcal{N}\)，其中图像被划分为\(\mathcal{S}\times \mathcal{S}\)网格。参考DMPR-PS~\cite{huang2019dmpr}方法，特征图\(\mathbb{R}\)对应输入图像中的标线点，\(\mathcal{N}\)维特征描述每个点的属性。随后通过模板匹配判断点对是否构成有效的停车位入口线，过程可表示为：
+给定数据集后，本文随机选取部分带标签数据组成有标签集\(\mathcal{D}_{L}=\{({\textbf{x}}_{l},{\textbf{y}}_{l})\}\)，剩余部分作为无标签集\(\mathcal{D}_{U}=\{({\textbf{x}}_{u})\}\)。对于尺寸为\(512\times512\)的图像\(\textbf{x}_{l}\)及其标签\(\textbf{y}_{l}\)，SS-PSD 模型的目标是预测特征图\(\mathbb{R} \in \mathcal{S}\times \mathcal{S} \times \mathcal{N}\)，其中图像被划分为\(\mathcal{S}\times \mathcal{S}\)网格。参考DMPR-PS~\cite{huang2019dmpr}方法，特征图\(\mathbb{R}\)对应输入图像中的标线点，\(\mathcal{N}\)维特征描述每个点的属性。随后通过模板匹配判断点对是否构成有效的停车位入口线，整个过程可表示为：
 
 \begin{equation}
 \textbf{x}_{l} \xrightarrow{M_{\theta}} \mathbb{R}^{\mathcal{S}\times \mathcal{S} \times \mathcal{N}} \xrightarrow {\text{模版匹配}} \text{停车检测结果},
@@ -209,7 +209,7 @@ D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_
 \end{figure}
 
 \subsection{自适应特征扰动}
-特征扰动是半监督学习的关键策略之一。SS-PSD 采用虚拟对抗训练（Virtual Adversarial Training，VAT\cite{miyato2018virtual}）生成对抗噪声，而非随机噪声，旨在最大化扰动前后预测的差异。如图 \ref{fig_vat} 所示，给定潜在特征\(\textbf{z}\)，网络通过梯度引导生成对抗噪声\(\textbf{r}\)，使\((D_\theta(\textbf{z}+\textbf{r}) - D_\theta(\textbf{z}))\)最大化，以干扰网络预测。要达到理想的扰动效果，\(D_\theta\)的模型质量至关重要，因其决定了梯度的搜索方向。
+特征扰动是半监督学习的关键策略之一。SS-PSD 采用虚拟对抗训练（Virtual Adversarial Training，VAT\cite{miyato2018virtual}）生成对抗噪声，而非随机噪声，旨在最大化扰动教师模型和学生模型预测的差异。如图 \ref{fig_vat} 所示，给定潜在特征\(\textbf{z}\)，网络通过梯度引导生成对抗噪声\(\textbf{r}\)，使\((D_\theta(\textbf{z}+\textbf{r}) - D_\theta(\textbf{z}))\)最大化，以干扰网络预测。要达到理想的扰动效果，\(D_\theta\)的模型质量至关重要，因其决定了梯度的搜索方向。
 
 现有方法如PS-MT~\cite{liu2022perturbed}使用教师模型\(D_{\theta}^{T}\)计算对抗噪声（T-VAT），但本文发现，由于直接梯度引导，训练初期学生模型\(D_{\theta}^{S}\)往往具有更好的特征质量。因此，本文提出自适应虚拟对抗训练（Adaptive-VAT），根据教师与学生模型的抗扰鲁棒性，自适应选择最优对抗噪声。
 
@@ -245,7 +245,6 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 \end{cases}
 ,
 \end{equation}
-
 其中\(q = (x,y,\cos\theta_1,\sin\theta_1,\cos\theta_2,\sin\theta_2,\textbf{s},\textbf{t})\)，上标\(S\)、\(T\)分别对应学生模型和教师模型的预测输出，下标\(i\)为网格单元索引，\(\tau=0.9\)为置信阈值。该损失仅对高置信度区域施加严格约束，聚焦于更可能包含标记点的网格单元。 
 
 
@@ -306,7 +305,7 @@ SS-PSD & \textbf{71.72\%} & \textbf{79.75\%} & \textbf{81.03\%} & \textbf{83.78\
 
 \subsection{不同数据划分的结果}
 
-本文参照Mean Teacher\cite{tarvainen2017mean}方法，通过对数据集进行比例抽样来评估所提方法的性能。具体而言，本节将数据集划分为有标签集和无标签集，其中有标签集比例为\(1/n\)，无标签集比例为\((1 - \frac{1}{n})\)。对于 CRPS-D 数据集和公开数据集 ps2.0，本节均采用\(1/24\)、\(1/12\)、\(1/8\)、\(1/4\)和\(1/2\)的有标签比例进行实验。由于 SS-PSD 是该领域首个半监督解决方案，因此本文只能与现有的公开全监督方案进行对比（DMPR-PS$^{*}$ 与 GCN$^{*}$，其中$^{*}$表示已使用 CRPS-D 数据集重新训练），评估指标选用更能体现模型效果的平均精度（\(AP\)）。
+本节参照Mean Teacher\cite{tarvainen2017mean}方法，通过对数据集进行比例抽样来评估所提方法的性能。具体而言，本节将数据集划分为有标签集和无标签集，其中有标签集比例为\(1/n\)，无标签集比例为\((1 - \frac{1}{n})\)。对于 CRPS-D 数据集和公开数据集 ps2.0，本节均采用\(1/24\)、\(1/12\)、\(1/8\)、\(1/4\)和\(1/2\)的有标签比例进行实验。由于 SS-PSD 是该领域首个半监督解决方案，因此本节只能与现有的公开全监督方案进行对比（DMPR-PS$^{*}$ 与 GCN$^{*}$，其中$^{*}$表示已使用 CRPS-D 数据集重新训练），评估指标选用更能体现模型效果的平均精度（\(AP\)）。
 
 （1）CRPS-D 实验结果分析
 
