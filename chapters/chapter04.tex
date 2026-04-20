@@ -40,13 +40,13 @@
 
 下面将依次对这三个关键组件进行详细阐述。
 
-\subsection{结构感知 CutMix 策略}
+\subsection{基于结构感知的增强策略}
 在关键点检测任务中，数据分布不均衡与场景复杂性会对模型泛化能力造成影响。因此，数据增强策略成为训练过程的关键组成部分。CutMix\cite{yun2019cutmix} 是一种经典的增强方法，其通过在不同图像间随机裁剪并粘贴区域，线性混合标签信息，可以显著提升模型鲁棒性与抗过拟合能力。然而，原始 CutMix 未考虑空间结构语义，直接随机裁剪替换区域，在结构化感知任务中可能引发问题。
 
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp3/sa.pdf}
-\caption{结构感知 CutMix 策略示意图 \\Figure~\ref{fig_cutmix}~Schematic of the proposed Structure-Aware CutMix strategy}
+\caption{SA-CutMix 策略示意图 \\Figure~\ref{fig_cutmix}~Schematic of the proposed SA-CutMix strategy}
 \label{fig_cutmix}
 \end{figure}
 
@@ -236,11 +236,11 @@ Table~\ref{tab_2crps}~Performance comparison between SAKM-PSD and GCN\cite{min20
 \label{tab_2ab}
 \end{table}
 
-从实验结果可以看出，所提出的每个模块均对最终性能有积极贡献，且呈现出累加效应。首先，在基准模型中引入AGI模块后，AP从 77.76\%提升至 78.94\%，提升了 1.18 个百分点，表明该模块在捕捉车位关键点间的几何关系方面具备良好的建模能力。进一步加入 SPF-Loss 后，AP 提升至 79.45\%，显示结构感知损失函数能有效增强模型对关键点间结构匹配的关注，从而提高整体检测精度。最后，结合 SA-CutMix 数据增强策略后，AP 显著提升至 82.38\%，进一步提升了模型的泛化能力和鲁棒性。
+从实验结果可以看出，所提出的每个模块均对最终性能有积极贡献，且呈现出累加效应。首先，在基准模型中引入AGI模块后，$AP$ 从 77.76\%提升至 78.94\%，提升了 1.18 个百分点，表明该模块在捕捉车位关键点间的几何关系方面具备良好的建模能力。进一步加入 SPF-Loss 后，$AP$ 提升至 79.45\%，显示结构感知损失函数能有效增强模型对关键点间结构匹配的关注，从而提高整体检测精度。最后，结合 SA-CutMix 数据增强策略后，$AP$ 显著提升至 82.38\%，进一步提升了模型的泛化能力和鲁棒性。
 
 综上所述，本章各关键设计均能在不同程度上提升模型性能，且组合使用时效果最优，验证了SAKM-PSD 模型在结构建模、损失设计和数据增强等方面的有效性和互补性。各模块协同工作，共同提升了模型在复杂场景下的检测性能。
 
-\subsection{可视化结果}
+\subsection{检测结果可视化}
 为进一步验证 SAKM-PSD 在实际应用中的泛化能力与鲁棒性，本节从 CRPS-D 数据集中选取了十种具有代表性的复杂场景进行可视化展示，如图 \ref{fig_res2} 所示。所选场景涵盖了多种真实环境下的典型干扰因素，包括光照条件多变（如室内弱光、强光、夜间和强阴影）、恶劣天气（如雨天）、结构复杂性（如斜置车位和受损车位），以及车位分布密集或地面存在反光等情形。这些场景充分模拟了实际停车环境中常见的挑战因素，对模型的感知能力和鲁棒性提出了更高要求。
 
 \begin{figure}[!h]
