@@ -191,7 +191,7 @@ SS-PSD 采用教师-学生双分支架构（如图 \ref{fig_sspsd} 所示），�
 
 （1）学生分支
 
-SS-PSD 的学生分支和教师分支均采用编码器-解码器架构。对于有标签集 $\mathcal{D}_l$ 和无标签集 $\mathcal{D}_u$，学生编码器 $E_{\theta}^{S}$ 将输入图像 $\textbf{x}_{l/u}$ 映射至潜在特征空间 $textbf{z}_{l} / \textbf{z}_{u}$。同时，为了增强模型在复杂环境下的鲁棒性，SS-PSD 引入自适应虚拟对抗扰动（Adaptive-VAT）模块。该模块计算生成的对抗噪声 $\textbf{r}_{adv}$ 作用于特征空间，最终通过解码器 $D_{\theta}^{S}$ 输出预测特征图：
+SS-PSD 的学生分支和教师分支均采用编码器-解码器架构。对于有标签集 $\mathcal{D}_l$ 和无标签集 $\mathcal{D}_u$，学生编码器 $E_{\theta}^{S}$ 将输入图像 $\textbf{x}_{l/u}$ 映射至潜在特征空间 $\textbf{z}_{l} / \textbf{z}_{u}$。同时，为了增强模型在复杂环境下的鲁棒性，SS-PSD 引入自适应虚拟对抗扰动（Adaptive-VAT）模块。该模块计算生成的对抗噪声 $\textbf{r}_{adv}$ 作用于特征空间，最终通过解码器 $D_{\theta}^{S}$ 输出预测特征图：
 \begin{equation}
 D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_{L}^{S} / \mathbb{R}_{U}^{S},
 \end{equation}
@@ -351,7 +351,7 @@ Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  \\
 \end{figure}
 
 
-图 \ref{fig_curve} 展示了 SS-PSD 与监督基线在两个数据集上的性能对比。可以看出，
+图 \ref{fig_curve} 展示了 SS-PSD 与监督基线在两个数据集上的性能对比，其中横轴是标注比例，纵轴是$AP$值。
 在 CRPS-D 数据集上，由于其更高的复杂性和真实性，SS-PSD 相较于监督基线的提升更为显著，特别是在标注数据量较少的情况下。这表明 SS-PSD 能够有效利用未标注数据，提取更广泛的特征表示。在 ps2.0 数据集上，尽管基线方法的性能已经较高，SS-PSD 仍然能够实现一定程度的性能提升，验证了所提方法的泛化能力。 
 
 综上，本文提出的 SS-PSD 半监督方法能够有效利用未标注数据提升停车位检测性能，在标注数据稀缺的情况下尤为显著。该方法不仅在自建的 CRPS-D 数据集上表现优异，在公开的 ps2.0 数据集上也展现出良好的泛化能力，为解决停车位检测中的数据标注瓶颈提供了新的思路。
@@ -389,7 +389,7 @@ Table~\ref{tab_recent}~Comparison with recent methods under different supervisio
 
 实验结果表明，当仅使用\(1/12\)的标签（819个）时，“SS-PSD(1/12)”的性能显著优于现有的自监督方法（SAM-PS\cite{zhai2024sam}），查准率提升了 1.16\%，查全率提升了 9.95\%；当使用一半的标签（4913个）时，“SS-PSD(1/2)”获得了与全监督模型相当的性能，差异仅约为\(1\%\)，充分体现了半监督学习的优势。
 
-此外，本节还分析了随着标注数据比例增加，SS-PSD 与完全监督基线模型（DMPR-PS\cite{huang2019dmpr}）之间的性能差距。如图 \ref{fig_ps} 和 \ref{fig_crps} 所示，当仅有少量标注数据时，SS-PSD 的性能始终优于完全监督基线模型，黄色部分清晰展示了 SS-PSD 方法带来的性能提升；随着标注数据量增多，这种性能差距逐渐缩小，呈现出收益递减的现象，这符合预期，因为一旦有足够的标注数据，利用未标注数据的边际收益便会降低。
+此外，本节还分析了随着标注数据比例增加，SS-PSD 与完全监督基线模型（DMPR-PS\cite{huang2019dmpr}）之间的性能差距。如图 \ref{fig_ps} 和 \ref{fig_crps} 所示，当仅有少量标注数据时，SS-PSD 的性能始终优于完全监督基线模型，黄色部分清晰展示了 SS-PSD 方法带来的性能提升。随着标注数据量增多，这种性能差距逐渐缩小，呈现出收益递减的现象，因为一旦有足够的标注数据，利用未标注数据的边际收益便会降低。
 
     \begin{figure}[!h]
     \centering
@@ -409,9 +409,9 @@ Table~\ref{tab_recent}~Comparison with recent methods under different supervisio
 
 
 \subsection{消融实验}
-本节旨在探究置信度引导掩码（CGM）一致性和自适应特征扰动（Adaptive-VAT）对所提方法性能的影响。所有实验均基于 CRPS-D 数据集，使用标注数据比例设定为 1/12。各组件的具体贡献详见表 \ref{tab_ab}，该表同时展示了标记点检测平均精度（$AP_{marking-point}$）和停车位检测平均精度（$AP_{parking-slot}$）。
+本节旨在探究置信度引导掩码（CGM）一致性和自适应特征扰动（Adaptive-VAT）对所提方法性能的影响。所有实验均基于 CRPS-D 数据集，使用标注数据比例设定为 1/12。各组件的具体贡献详见表 \ref{tab_ab}，该表同时展示了标记点检测平均精度（$AP_{marking-point}$）和停车位检测平均精度（$AP_{parking-slot}$）的结果。
 
-实验结果表明，相较于仅采用均方误差（MSE）损失的半监督基线 MT 方法，CGM 一致性约束使得$AP_{parking-slot}$提升了 3.6 个百分点，而 Adaptive-VAT 的引入进一步将$AP_{parking-slot}$提高了 0.82 个百分点。
+实验结果表明，相较于仅采用均方误差损失（MSE）的半监督基线 MT 方法，CGM 一致性约束使得$AP_{parking-slot}$提升了 3.6 个百分点，而 Adaptive-VAT 的引入进一步将$AP_{parking-slot}$提高了 0.82 个百分点。
 
 \begin{table}[!h]
 \centering
@@ -434,7 +434,7 @@ Table~\ref{tab_ab}~Ablation results with 1/12 labeled data}
 
 （1）CGM 一致性
 
-通过逐步去除 CGM 一致性的关键组件，本节深入剖析了其对性能的影响。具体而言，首先去除掩码组件得到 CG 一致性，接着去除置信度权重得到 C 一致性。从 表\ref{tab_ablation} 可以看出：
+通过逐步去除 CGM 一致性的关键组件，本节深入剖析了其对性能的影响。具体而言，首先去除掩码组件得到 CG 一致性，接着去除置信度权重得到 C 一致性。从 表 \ref{tab_ablation} 可以看出：
 仅采用 C 一致性（对所有单元格施加相同约束）时，性能表现较差，停车位检测平均精度仅为 54.88\%；
 引入置信度权重（CG 一致性）后，性能得到显著提升，$AP_{parking-slot}$达到78.22\%；
 进一步加入掩码处理（CGM 一致性），$AP_{parking-slot}$进一步提升至 78.93\%，较 CG 一致性提升了 0.71 个百分点。
@@ -449,7 +449,7 @@ Table~\ref{tab_ab}~Ablation results with 1/12 labeled data}
 \centering
 \caption{CGM 一致性与 Adaptive-VAT 内部策略消融实验 \\
 Table~\ref{tab_ablation}~Ablation of strategy variants for CGM consistency and Adaptive-VAT}
-\setlength{\tabcolsep}{10mm}
+\setlength{\tabcolsep}{12mm}
 \begin{tabular}{lcc}
 \toprule
    &  $AP_{marking-point}$ & $AP_{parking-slot}$ \\
@@ -465,14 +465,6 @@ Table~\ref{tab_ablation}~Ablation of strategy variants for CGM consistency and A
 \end{tabular}
 \label{tab_ablation}
 \end{table}
-
-\subsection{超参数敏感性分析}
-
-本节讨论两个关键超参数的值选择：置信度阈值 ($\tau$) 和干扰强度 ($eps$)，所有实验均使用 1/12 标注比例在 CRPS-D 数据集上训练。
-
-（1）置信度阈值 ($\tau$)
-
-本节将置信度阈值在 0 到 1 之间以 0.1 为步长进行变化，实验结果如表 \ref{tab_confidence} 所示。从表中可以看出，当阈值为 0.9 时性能最优，停车位检测平均精度达到 79.75\%。这与FixMatch\cite{sohn2020fixmatch}方法中的结论相符（该方法通过选取置信度更高的标签来提升伪标签的准确率）。因此，本文最终选择了较高的阈值（$\tau$ = 0.9）。
 
 \begin{table}[!h]
 \centering
@@ -495,6 +487,14 @@ Table~\ref{tab_ablation}~Ablation of strategy variants for CGM consistency and A
     \end{tabular}
 \label{tab_confidence}
 \end{table} 
+
+\subsection{超参数敏感性分析}
+
+本节讨论两个关键超参数的值选择：置信度阈值 ($\tau$) 和干扰强度 ($eps$)，所有实验均使用 1/12 标注比例在 CRPS-D 数据集上训练。
+
+（1）置信度阈值 ($\tau$)
+
+本节将置信度阈值在 0 到 1 之间以 0.1 为步长进行变化，实验结果如表 \ref{tab_confidence} 所示。从表中可以看出，当阈值为 0.9 时性能最优，停车位检测平均精度达到 79.75\%。这与FixMatch\cite{sohn2020fixmatch}方法中的结论相符（该方法通过选取置信度更高的标签来提升伪标签的准确率）。因此，本文最终选择了较高的阈值（$\tau$ = 0.9）。
 
 （2）干扰强度 ($eps$)
 
@@ -551,7 +551,7 @@ Table~\ref{tab_test}~Robustness evaluation on various scene-specific sub-test se
 
 \subsection{分场景检测结果分析}
 
-表 \ref{tab_test} 呈现了监督基线方法（DMPR-PS\cite{huang2019dmpr}）与本文所提 SS-PSD 方法在不同场景（对应于 CRPS-D 数据集的子测试集）下的性能评估情况，该结果基于 CRPS-D 数据集训练得出，其中标注数据与未标注数据的比例为 1/12。实验结果表明，无论是在简单场景（如“室内弱光”“室外阴影”），还是复杂场景（如“受损车位”“室外夜晚”），SS-PSD 模型均展现出更优的性能，停车位检测的可视化结果如图 \ref{fig_result} 所示。
+表 \ref{tab_test} 呈现了监督基线方法（DMPR-PS\cite{huang2019dmpr}）与本文所提 SS-PSD 方法在不同场景（对应于 CRPS-D 数据集的子测试集）下的性能评估情况，该结果基于 CRPS-D 数据集训练得出，其中标注数据与未标注数据的比例为 1/12。实验结果表明，无论是在简单场景（如“室内弱光”、“室外阴影”等），还是复杂场景（如“受损车位”、“室外夜晚”等），SS-PSD 模型均展现出更优的性能，停车位检测的可视化结果如图 \ref{fig_result} 所示。
 
 尤为突出的是，SS-PSD 能够通过有效利用易于获取的未标注数据，显著缓解长尾分布所带来的难题。例如，“室外夜晚”子集的数据规模最小（仅 86 张图像），在监督方案下表现最差（平均精度仅为 38.38\%），而本文的 SS-PSD 方法则可大幅提升模型性能，平均精度达到 63.45\%，提升了 25.07 个百分点。
 
@@ -559,7 +559,7 @@ Table~\ref{tab_test}~Robustness evaluation on various scene-specific sub-test se
 
 \section{本章小结}
 
-本章针对复杂真实场景中停车位检测任务面临的数据规模受限以及标注成本高昂问题，从数据构建与学习范式两个层面展开研究。本章首先构建了新的复杂真实场景停车位数据集 CRPS-D。该数据集覆盖多光照、多视角、多停车形式及多种天气条件，包含丰富的场景变化和复杂实例，为后续方法研究提供了统一、具有挑战性的数据基础。然后，本章又提出了面向停车位检测任务的半监督检测方法 SS-PSD。该方法基于教师-学生学习范式，通过 CGM 一致性约束和自适应 VAT 扰动有效利用未标注数据，显著提升了模型的泛化能力与鲁棒性。
+本章针对复杂真实场景中停车位检测任务面临的数据规模受限以及标注成本高昂问题，从数据构建与学习范式两个层面展开研究。首先构建了新的复杂真实场景停车位数据集 CRPS-D。该数据集覆盖多光照、多视角、多停车形式及多种天气条件，包含丰富的场景变化和复杂实例，为后续方法研究提供了统一、具有挑战性的数据基础。然后，本章又提出了面向停车位检测任务的半监督检测方法 SS-PSD。该方法基于教师-学生学习范式，通过 CGM 一致性约束和自适应 VAT 扰动模块有效利用未标注数据，显著提升了模型的泛化能力与鲁棒性。
 最终的实验结果表明，SS-PSD 在不同标注比例下均显著优于现有全监督方法，特别是在标注数据极度稀缺的情况下性能提升更为明显。并且，SS-PSD 在不同场景下也展现出良好的适应性，尤其在长尾分布场景（如夜晚）中性能提升明显，缓解了数据不平衡带来的检测误差。
 
 
