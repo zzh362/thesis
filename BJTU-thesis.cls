@@ -43,7 +43,7 @@
 \def\BJTU@label@studentNumber{学~~~~~~号:~}
 \def\BJTU@label@advisor{导师姓名:~}
 \def\BJTU@label@advisorTitle{职~~~~~~称:~}
-\def\BJTU@label@engineeringMasterField{专业学位类别:~}
+\def\BJTU@label@engineeringMasterField{专业学位类别（领域）:~}
 \def\BJTU@label@degreeLevel{学位级别:~}
 \def\BJTU@label@degreeType{学位类别:~}
 \def\BJTU@label@major{学科专业:~}
