@@ -187,7 +187,7 @@ Table~\ref{tab_sence}~Scene distribution in the test set}
 
 \subsection{网络架构}
 
-SS-PSD 采用教师-学生双分支架构（如图 \ref{fig_sspsd} 所示），两者共享相同的网络结构\(M_{\theta}=\{E_{\theta}, D_{\theta}\}\)，包含编码器\(E_{\theta}: \textbf{x}\rightarrow \textbf{z}\)和解码器\(D_{\theta}: \textbf{z}\rightarrow \mathbb{R}^{\mathcal{S} \times \mathcal{S} \times \mathcal{N}}\)。教师模型记为\(M_{\theta}^{T}=\{E_{\theta}^{T}, D_{\theta}^{T}\}\)，学生模型记为\(M_{c}^{S}=\{E_{\theta}^{S}, D_{\theta}^{S}\}\)。
+SS-PSD 采用教师-学生双分支架构（如图 \ref{fig_sspsd} 所示），两者共享相同的网络结构\(M_{\theta}=\{E_{\theta}, D_{\theta}\}\)，包含编码器\(E_{\theta}: \textbf{x}\rightarrow \textbf{z}\)和解码器\(D_{\theta}: \textbf{z}\rightarrow \mathbb{R}^{\mathcal{S} \times \mathcal{S} \times \mathcal{N}}\)。教师模型记为\(M_{\theta}^{T}=\{E_{\theta}^{T}, D_{\theta}^{T}\}\)，学生模型记为\(M_{\theta}^{S}=\{E_{\theta}^{S}, D_{\theta}^{S}\}\)。
 
 （1）学生分支
 
@@ -204,7 +204,7 @@ D_{\theta}^{S}(\textbf{z}_{l} / \textbf{z}_{u} + \textbf{r}_{adv}) = \mathbb{R}_
 \begin{equation}
 \theta_{t}^{T} = \beta \theta_{t-1}^{T} + (1 - \beta) \theta_{t}^{S},
 \end{equation}
-其中 $\beta$ 为平滑系数，这种更新方式保证了教师分支能够平滑地集成学生分支在训练过程中习得的特征提取能力。
+其中$\theta_t$为$t$时刻模型的权重，$\beta$ 为平滑系数。这种更新方式保证了教师分支能够平滑地集成学生分支在训练过程中习得的特征提取能力。
 
 \begin{figure}[!h]
 \centering

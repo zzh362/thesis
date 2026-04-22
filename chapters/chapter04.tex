@@ -35,7 +35,7 @@
 
 （1）结构感知 CutMix 策略（Structure-Aware CutMix，SA-CutMix）：该策略通过在背景区域进行智能裁剪替换，增强背景多样性的同时保持了关键点结构完整性，提高了模型对非结构区域的鲁棒性。
 
-（2）注意力引导插值模块（Attention-Guided Interpolation，AGI Module）：该模块利用注意力机制引导特征插值，提高了特征对关键结构位置的敏感性与表示能力。
+（2）注意力引导插值模块（Attention-Guided Interpolation Module，AGI Module）：该模块利用注意力机制引导特征插值，提高了特征对关键结构位置的敏感性与表示能力。
 
 （3）稀配聚焦损失（Sparse Pairwise Focal Loss，SPF-Loss）：针对停车位关键点稀疏分布的特点，本文设计了聚焦损失函数，缓解了样本稀疏带来的训练不稳定问题。
 
@@ -85,19 +85,19 @@ SA-CutMix 从结构保持与信息干扰两个角度出发：一方面保留关�
 在停车位关键点检测与匹配任务中，特征的精细建模对于稀疏关键点的准确定位与结构关系的稳定建模至关重要。传统描述符提取方法多采用直接在特征图上进行双线性插值采样的方式，尽管具备一定的连续性和可微性，但对所有空间位置一视同仁，未能显式区分结构区域与背景区域的重要性差异。在复杂场景中，如存在遮挡、强光、阴影或纹理混杂等干扰时，这种等权采样机制往往会削弱关键结构区域的表达能力，导致描述符判别性不足，影响后续的匹配与回归性能。
 为此，本文提出注意力引导的特征插值模块（AGI Module），通过引入轻量注意力机制提升特征在结构区域的表达能力，增强描述符对结构关系的建模效果。
 
-具体地，设输入特征图为 $F\in R^{B\times C\times H\times W}$，其中 $B$ 为 batch 大小，$C$ 为通道数，$H,W$ 为特征图尺寸。首先通过 $1\times1$ 卷积操作提取通道注意力响应，生成单通道注意力图 $A\in R^{B\times1\times H\times W}$，并使用 Sigmoid 激活函数将其归一化至区间 $\left[0,1\right]$，以获得每个空间位置的显著性估计：
+具体地，设输入特征图为 $F\in \mathbb{R}^{B\times C\times H\times W}$，其中 $B$ 为 batch 大小，$C$ 为通道数，$H,W$ 为特征图尺寸。首先通过 $1\times1$ 卷积操作提取通道注意力响应，生成单通道注意力图 $A\in \mathbb{R}^{B\times1\times H\times W}$，并使用 Sigmoid 激活函数将其归一化至区间 $\left[0,1\right]$，以获得每个空间位置的显著性估计：
 \begin{equation}
     A=\sigma\left({\mathrm{Conv}}_{1\times1}\left(F\right)\right).
 \end{equation}
 
 该注意力图反映了当前图像中结构区域的重要性分布，可用于强调具有结构语义的显著区域并抑制冗余或噪声背景。随后，将原始特征图与注意力图逐元素相乘，得到加权特征图 $F\prime=F\odot A$。该操作在保留空间连续性的同时增强了结构敏感区域的响应，有助于提升后续插值描述符的判别性。
 
-在加权特征图 $F\prime$ 上，继续采用双线性插值对关键点位置进行特征采样。关键点位置以归一化坐标 $\left[-1,1\right]$ 表示，具体采样过程通过 PyTorch 的 $F.grid\_sample$ 函数实现，并将结果沿空间维度展平，得到结构感知描述符 $D\in R^{B\times C\times N}$，其中 $N$ 表示每张图像中的关键点数量。由于注意力机制已对特征图进行重加权，该描述符在稀疏标注条件下表现出更强的稳定性与区分能力。整个过程如图 \ref{fig_agi} 所示。
+在加权特征图 $F\prime$ 上，继续采用双线性插值对关键点位置进行特征采样。关键点位置以归一化坐标 $\left[-1,1\right]$ 表示，具体采样过程通过 PyTorch 的 $F.grid\_sample$ 函数实现，并将结果沿空间维度展平，得到结构感知描述符 $D\in \mathbb{R}^{B\times C\times N}$，其中 $N$ 表示每张图像中的关键点数量。由于注意力机制已对特征图进行重加权，该描述符在稀疏标注条件下表现出更强的稳定性与区分能力。整个过程如图 \ref{fig_agi} 所示。
 
 \begin{figure}[!h]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp3/agi.pdf}
-\caption{注意力引导插值（AGI）模块示意图 \\Figure~\ref{fig_agi}~Schematic of the Attention-Guided Interpolation (AGI)}
+\caption{注意力引导插值（AGI）模块示意图 \\Figure~\ref{fig_agi}~Schematic of the Attention-Guided Interpolation (AGI) Module}
 \label{fig_agi}
 \end{figure}
 
@@ -192,7 +192,7 @@ c.掩码中标记出参与训练的位置，用于规避空区域的梯度干扰
 \centering
 \setlength{\tabcolsep}{4mm}
 \caption{SAKM-PSD 与 GCN\cite{min2021attentional} 在 CRPS-D 数据集上的性能对比 \\
-Table~\ref{tab_2crps}~Performance comparison between SAKM-PSD and GCN\cite{min2021attentional on CRPS-D}}
+Table~\ref{tab_2crps}~Performance comparison between SAKM-PSD and GCN\cite{min2021attentional} on CRPS-D}
     \begin{tabular}{lccccc}
         \toprule
          方法 & Backbone & Precision & Recall & $AP$  & 训练轮数\\
