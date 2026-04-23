@@ -56,11 +56,11 @@
 \def\BJTU@value@studentNumber{XXXX}
 \def\BJTU@value@advisor{XXXX}
 \def\BJTU@value@advisorTitle{XXXX}
-\def\BJTU@value@engineeringMasterField{XXXX} %人工智能
+\def\BJTU@value@engineeringMasterField{人工智能} %人工智能
 \if@isDoctor
 \def\BJTU@value@degreeLevel{博士}
 \else
-\def\BJTU@value@degreeLevel{XX} %硕士
+\def\BJTU@value@degreeLevel{硕士} %硕士
 \fi
 \def\BJTU@value@degreeType{XXXX}
 \def\BJTU@value@major{XXXX}
@@ -188,22 +188,32 @@
 }{}
 
 
-%%定义正文的页眉页脚格式
 \def\BJTU@chapter{}
 \fancypagestyle{BJTU@heading}{
 	\fancyhf{}
-	\fancyhead[L]{
+	\renewcommand{\headrulewidth}{0.4pt}
+	\renewcommand{\footrulewidth}{0pt}
+	\def\BJTU@schoolheader{%
+		\songti\zihao{5}%
 		\if@isDoctor
-		\ziju{0.05}{北京交通大学博士学位论文}
+		北京交通大学博士学位论文%
 		\else
-		\ziju{0.05}{北京交通大学硕士专业学位论文}
+		北京交通大学硕士专业学位论文%
 		\fi
-	}
-	\fancyhead[R]{{\leftmark}}
-           \setlength{\headsep}{0.9cm}
-         \setlength{\footskip}{0.8cm}
-	\fancyfoot[C]{\thepage}
+	}%
+	\if@isTwoSide
+		% 双面：偶数页居中学校抬头；奇数页居中章名
+		\fancyhead[CE]{\BJTU@schoolheader}
+		\fancyhead[CO]{\songti\zihao{5}\nouppercase{\leftmark}}
+	\else
+		% 单面：左对齐学校抬头；右对齐章名
+		\fancyhead[L]{\BJTU@schoolheader}
+		\fancyhead[R]{\songti\zihao{5}\nouppercase{\leftmark}}
+	\fi
+	% 页脚：正文页码居中，小五 Times New Roman
+	\fancyfoot[C]{\rmfamily\zihao{-5}\thepage}
 }
+
 
 
 %%设置页边距和装订线

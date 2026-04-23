@@ -58,7 +58,7 @@
 
 该策略可概括为如下伪代码流程：
 
-\begin{algorithm}[htbp]
+\begin{algorithm}[H]
 \caption{结构感知 CutMix 数据增强（SA-CutMix）}
 \label{alg:sacutmix}
 \begin{algorithmic}[1]
@@ -76,6 +76,7 @@
 \State \Return $(I_{\text{mix}}, M_1)$
 \end{algorithmic}
 \end{algorithm}
+
  
 SA-CutMix 从结构保持与信息干扰两个角度出发：一方面保留关键点对应的几何结构区域，使模型持续学习结构先验；另一方面引入其他图像的背景扰动，如不同地面材质、纹理变化、光照条件或遮挡物体，有效扩展模型对环境变化的感知能力。
 与原始 CutMix 相比，SA-CutMix 更适用于关键点稀疏、结构约束强的任务场景。在停车位检测中，关键点数量有限且排列规律显著，任何对结构区域的破坏都可能导致空间推理能力下降。SA-CutMix 避免了这种破坏，在结构稳定的前提下引入背景扰动，增强了模型对边缘遮挡、复杂纹理与极端光照等复杂场景的适应能力。
