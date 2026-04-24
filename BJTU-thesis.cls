@@ -121,7 +121,7 @@
 		\if@isDoctor
 		{\bfseries \songti\zihao{2}\ziju{0.15}{博士学位论文}\\}
 		\else
-		{\bfseries \songti\zihao{2}\ziju{0.15}{硕士专业学位论文}\\}
+		{\coverboldsong\bfseries\zihao{2}\ziju{0.3}{硕士专业学位论文}\\}
 		\fi
 		%这里控制上下间距
 		\vspace{44pt}
@@ -177,7 +177,7 @@
 }{}
 
 %定义中英文关键词命令
-\newcommand{\keywords}[1]{\textbf{关键词：}#1}
+\newcommand{\keywords}[1]{{\coverboldsong\bfseries 关键词：}#1}
 \newcommand{\englishkeywords}[1]{\textbf{KEYWORDS:~}#1}
 
 %定义英文摘要环境
@@ -368,7 +368,7 @@ headheight=1.8cm
 		\if@isDoctor
 		{\songti\zihao{2}\bfseries{博~士~学~位~论~文\\}}
 		\else
-		{\songti\zihao{2}\bfseries{硕~士~专~业~学~位~论~文\\}}		
+		{\coverboldsong\bfseries\zihao{2}{硕~士~专~业~学~位~论~文\\}}		
 		\fi
 		\vspace{44pt}
 		{\songti\zihao{-3}\BJTU@value@title\\}
