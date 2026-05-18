@@ -45,7 +45,7 @@ Q = \phi_q(F_t), \\
 K = \phi_k(F_{t-1}), \\
 V = \phi_v(F_{t-1}),
 \end{equation}
-其中 $\phi_q(\cdot)$、$\phi_k(\cdot)$ 和 $\phi_v(\cdot)$ 为可学习的线性投影函数。为提升模型对不同语义子空间的建模能力，引入多头注意力机制~\cite{vaswani2017attention}将通道维度划分为 $N$ 个注意力头，并将空间维度展开为 $HW$，得到：
+其中 $\phi_q(\cdot)$、$\phi_k(\cdot)$ 和 $\phi_v(\cdot)$ 为可学习的线性投影函数。为提升模型对不同语义子空间的建模能力，本文引入多头注意力机制~\cite{vaswani2017attention}将通道维度划分为 $N$ 个注意力头，并将空间维度展开为 $HW$，得到：
 \begin{equation}
 Q, K, V \in \mathbb{R}^{B \times N \times \frac{C}{N} \times HW}.
 \end{equation}

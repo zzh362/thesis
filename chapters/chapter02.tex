@@ -98,25 +98,23 @@ Recall = \frac{TP}{TP + FN},
 式中，$TP$（$True$ $Positives$）表示正确检测出的真实目标数量，$FP$（$False$ $Positives$）表示误报为目标的背景区域数量，$FN$（$False$ $Negatives$）表示未被检测出的真实目标数量。
 
 为明确TP的判定标准，本文将标记点定义为$P=\{x, y, s, t, \varphi_{1}, \varphi_{2}\}$，其中$(x, y)$表示标记点位置，$s$表示形状，$t$表示类型，$\varphi_{1}, \varphi_{2}$表示两个边缘的角度（以度为单位）。设$P^{g}=\{x^{g}, y^{g}, s^{g}, t^{g}, \varphi_{1}^{g}, \varphi_{2}^{g}\}$为真实标记点$GT$（$Ground$ $Truth$），$P^{d}=\{x^{d}, y^{d}, s^{d}, t^{d}, \varphi_{1}^{d}, \varphi_{2}^{d}\}$为检测到的标记点。当满足以下条件时，认为$P^{g}$被准确识别，$P^{d}$为$TP$：
-\begin{equation}
-  \begin{aligned}
+  \begin{align}
   (x^{g}-x^{d})^{2} + (y^{g}-y^{d})^{2} < I^{2}, \\
 |\varphi_{1}^{g} - \varphi_{1}^{d}| < B \ or \ 360^{\circ} - |\varphi_{1}^{g} - \varphi_{1}^{d}| < B , \\
 |\varphi_{2}^{g} - \varphi_{2}^{d}| < B \ or \ 360^{\circ} - |\varphi_{2}^{g} - \varphi_{2}^{d}| < B , \\
 s^{g} = s^{d} \ and \ t^{g} = t^{d}.
-\end{aligned}
-  \end{equation}
+\end{align}
+
 
 如果满足这些条件，可以认为 $P^{g}$ 被准确识别，并且 $P^{d}$ 为$TP$。
 
 本文将停车位定义为 $S=\{(x_{1}, y_{1}), (x_{2}, y_{2}), \varphi_{s}\}$，其中 $(x_{1}, y_{1})$ 和 $(x_{2}, y_{2})$ 是两个标记点的坐标，$\varphi_{s}$ 表示入口线的方向。对于一个$GT$停车位 $S_{g}=\{(x_{1}^{g}, y_{1}^{g}), (x_{2}^{g}, y_{2}^{g}), \varphi_{s}^{g}\}$，如果检测到的停车位 $S_{d}=\{(x_{1}^{d}, y_{1}^{d}), (x_{2}^{d}, y_{2}^{d}), \varphi_{s}^{d}\}$ 满足以下不等式，则将其视为$TP$：
-\begin{equation}
-  \begin{aligned}
+\begin{align}
   (x_{1}^{g}-x_{1}^{d})^{2} + (y_{1}^{g}-y_{1}^{d})^{2} < I^{2}, \\
 (x_{2}^{g}-x_{2}^{d})^{2} + (y_{2}^{g}-y_{2}^{d})^{2} < I^{2}, \\
 |\varphi_{s}^{g} - \varphi_{s}^{d}| < B \ or \ 360^{\circ} - |\varphi_{s}^{g} - \varphi_{s}^{d}| < B.
-\end{aligned}
-  \end{equation}
+\end{align}
+
 
 即当停车位的两个标记点均位于$GT$的$I$个像素范围内，且$S_{d}$与$S_{g}$的角度差小于$B$时，$S_{d}$可以被判定为真阳性。对于$512 \times 512$分辨率的图像，本文设定$I=10$，$B=30$。
 
