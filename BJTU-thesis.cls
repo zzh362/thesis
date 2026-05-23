@@ -214,7 +214,14 @@
 	\fancyfoot[C]{\rmfamily\zihao{-5}\thepage}
 }
 
-
+% plain 页面页脚：小五号 Times New Roman
+% 用于内封页、章节首页等 \thispagestyle{plain} 页面
+\fancypagestyle{plain}{
+	\fancyhf{}
+	\renewcommand{\headrulewidth}{0pt}
+	\renewcommand{\footrulewidth}{0pt}
+	\fancyfoot[C]{{\fontspec{Times New Roman}\zihao{-5}\thepage}}
+}
 
 %%设置页边距和装订线
 \usepackage[
