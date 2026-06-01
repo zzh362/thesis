@@ -211,7 +211,8 @@
 		\fancyhead[R]{\songti\zihao{5}\nouppercase{\leftmark}}
 	\fi
 	% 页脚：正文页码居中，小五 Times New Roman
-	\fancyfoot[C]{\rmfamily\zihao{-5}\thepage}
+	% \fancyfoot[C]{\rmfamily\zihao{-5}\thepage}
+	\fancyfoot[C]{{\fontspec{Times New Roman}\zihao{-5}\thepage}}
 }
 
 % plain 页面页脚：小五号 Times New Roman
