@@ -5,13 +5,13 @@
 \section{研究动机}
 自动泊车技术作为自动驾驶领域的关键组成部分，其性能直接影响驾驶安全性与便利性。停车位检测作为自动泊车系统的感知起点，是实现准确泊车规划的前提。环视摄像头系统因能提供车辆周围环境的全景鸟瞰图，已成为停车位检测的主流传感器方案。传统停车位检测方法依赖手工设计的几何特征（如拐角、线条等），在复杂场景下精度有限，尤其在几何特征不明显的区域表现不佳~\cite{shengli2024}。
 
-随着深度学习技术的发展，基于学习的停车位检测方法已逐步取代传统方法。DeepPS\cite{zhang2018vision}及其配套数据集ps2.0的出现，标志着该领域正式进入深度学习时代。后续研究通过标记点回归\cite{huang2019dmpr}、图神经网络\cite{min2021attentional}和Transformer\cite{bui2023transformer}等技术，不断提升检测精度，在ps2.0数据集上已达到99\%以上的查准率。然而，真实停车场景的复杂性远超基准数据集，现有方法在实际应用中往往难以复现实验室性能。因此，构建更贴近真实场景、规模更大、挑战性更强的数据集，成为推动该领域发展的关键。
+随着深度学习技术的发展，基于学习的停车位检测方法已逐步取代传统方法。DeepPS\cite{zhang2018vision}及其配套数据集ps2.0的出现，标志着该领域正式进入深度学习时代。后续研究通过标记点回归\cite{huang2019dmpr}、图神经网络\cite{min2021attentional}和Transformer\cite{bui2023transformer}等技术，不断提升检测精度，在ps2.0数据集上已达到99\%以上的查准率与查全率。然而，真实停车场景的复杂性远超基准数据集，现有方法在实际应用中往往难以复现实验室性能。因此，构建更贴近真实场景、规模更大、挑战性更强的数据集，成为推动该领域发展的关键。
 
 为此，本文构建了复杂真实场景停车位数据集 CRPS-D\cite{zhang2025advancing}（Complex Real Parking Slot Detection Dataset），涵盖地上停车场、地下停车库、路边停车区等多种场景，覆盖白天、黑夜、晴天、阴天、雨天等多种天气与光照条件。该数据集规模远超现有公开数据集（如ps2.0\cite{zhang2018vision}和SNU\cite{do2020context}），且具有更高的车位密度、更多的斜向车位样本和更复杂的道路场景，为复杂场景下的停车位检测研究提供了统一的评估基准。
 
-另一方面，停车位检测方法的性能高度依赖训练数据的规模与多样性。但停车位作为结构化目标，其标注需要标记多个关键点及结构关系，人工标注效率较低、周期长，导致现有数据集在规模和场景覆盖上存在明显不足。这使得全监督学习方法在面对复杂光照、视角变化和非标准停车位时，泛化能力受限。
+另一方面，停车位检测方法的性能高度依赖训练数据的规模与多样性。但停车位作为结构化目标，其标注需要标记多个关键点及结构关系，人工标注效率较低、周期长，导致现有数据集在规模和场景覆盖上存在明显不足。这使得全监督学习方法在面对复杂光照、视角变化和受损严重的停车位时，泛化能力受限。
 
-对于这一数据标注瓶颈，半监督学习为停车位检测提供了新的解决思路。半监督学习通过利用未标注数据辅助训练，可有效降低对人工标注的依赖，已在目标检测等任务中展现出良好潜力。然而，停车位检测的结构化特性和关键点稀疏分布，给半监督学习带来独特挑战：如何在保证结构一致性的同时有效利用未标注数据，尚缺乏系统性研究。
+对于这一数据标注瓶颈，半监督学习策略为停车位检测提供了新的解决思路。半监督学习通过利用未标注数据辅助训练，可有效降低对人工标注的依赖，已在目标检测等任务中展现出良好潜力。然而，停车位检测的结构化特性和关键点稀疏分布，给半监督学习带来独特挑战：如何在保证结构一致性的同时有效利用未标注数据，尚缺乏系统性研究。
 
 针对这一问题，本文提出了首个停车位检测半监督学习方法（Semi-Supervised Parking Slot Detection，SS-PSD）。SS-PSD 基于教师-学生框架（Teacher-Student\cite{tarvainen2017mean}），融合了置信度引导掩码（CGM）一致性约束和自适应特征扰动机制（Adaptive-VAT）。其中，教师模型通过学生模型参数的指数移动平均（EMA\cite{tarvainen2017mean}）生成，利用一致性正则化引导学生模型学习。同时，为避免强制错误预测保持一致的问题，本文引入可训练的置信度图为不同区域分配权重，并对低置信度区域进行掩码处理，构建置信度引导的掩码一致性（Confidence-Guided Mask，CGM）约束。此外，为增强学生模型的鲁棒性，本文设计了 Adaptive-VAT 自适应特征扰动机制，根据教师与学生模型对扰动的鲁棒性，选择性生成更具挑战性的对抗噪声，促进学生模型学习更稳定的特征表示。
 
@@ -19,7 +19,7 @@
 
 （1）构建了复杂真实场景停车位数据集 CRPS-D，覆盖多光照、多场景和多种停车形式，为复杂场景下的停车位检测研究提供统一数据基础。
 
-（2）设计了面向停车位检测的半监督检测方法 SS-PSD，通过教师-学生学习范式挖掘未标注数据的潜在信息，为后续结构感知与时序建模方法的研究奠定基础。 
+（2）设计了面向停车位检测的半监督学习方法 SS-PSD，通过教师-学生范式挖掘未标注数据的潜在信息，有效提升模型在复杂场景下的检测精度与泛化能力。 
 
 \begin{figure}[!h]
 \centering
@@ -170,7 +170,7 @@ Table~\ref{tab_sence}~Scene distribution in the test set}
 
 \section{停车位检测半监督学习策略}
 
-本节详细阐述 SS-PSD 架构及其半监督学习策略。针对停车位检测任务中标注数据稀缺但无标注数据丰富的特点，SS-PSD 采用教师-学生架构来充分挖掘无标注数据中的监督信息，从而在有限标注条件下提升模型的泛化能力。如图 \ref{fig_sspsd}所示，该架构由两个分支组成：学习分支（学生模型）负责模型训练，指导分支（教师模型）通过指数移动平均（EMA）更新参数。
+本节详细阐述 SS-PSD 架构及其半监督学习策略。针对停车位检测任务中标注数据稀缺但无标注数据丰富的特点，SS-PSD 采用教师-学生架构来充分挖掘无标注数据中的监督信息，从而在有限标注条件下提升模型的检测能力。如图 \ref{fig_sspsd} 所示，该架构由两个分支组成：学习分支（学生模型）负责模型训练，指导分支（教师模型）通过指数移动平均（EMA）更新参数。
 
 \begin{figure}[!h]
 \centering
@@ -229,7 +229,7 @@ Adaptive-VAT通过实时评估模型确定性强度，动态构建更具挑战�
 \text{subject to }& ||\mathbf{r}_{adv}||_2 <=\epsilon,
 \end{align}
 \end{equation}
-其中 $d(\cdot,\cdot)$ 为均方误差（Mean Squared Error，MSE）损失，$\mathcal{M}(\cdot,\cdot)$为选择器，选择 MSE 损失更低的解码器作为扰动预测器。
+其中 $d(\cdot,\cdot)$ 为均方误差（Mean Squared Error，MSE）损失，$\mathcal{M}(\cdot,\cdot)$为选择器，选择 MSE 损失更低的解码器作为扰动预测器。$\epsilon$ 为扰动幅值的上限超参数，用于限制对抗噪声的上限，默认取值为 10。
 
 \subsection{一致性约束}
 在构建无标签数据的一致性约束时，直接计算学生与教师模型预测的 MSE 损失可能强制错误预测保持一致，进而误导网络学习。此外，对特征图\(\mathbb{R}\)中所有网格单元采用均等加权策略也并非最优。为此，如图 \ref{fig_cgm} 所示，本文引入置信度引导掩码一致性约束（CGM），为不同网格单元分配非均衡注意力，并对低置信度区域进行掩码处理。
@@ -361,7 +361,8 @@ Ratio & 1/24 & 1/12 & 1/8  & 1/4  & 1/2  \\
 
 \subsection{未标注数据有效性分析}
 
-需要说明的是，本文首次提出用于停车位检测的半监督方法，因此直接将其与全监督方法作比较并非完全公平。尽管如此，本节仍提供了 SS-PSD 与近期方法的对比结果。需要注意的是，这些方法（如SCCN（2022）\cite{zheng2022center}、SAM-PS（2024）\cite{zhai2024sam} 以及WTSA-Net（2026）\cite{li2026parking}等）并非开源，因此本文只能报告其原始论文在 ps2.0 数据集上的性能。结果如表 \ref{tab_recent} 所示，其中“SS-PSD(1/n)”表示使用\(1/n\)个标签进行训练。
+考虑到本文首次提出用于车位检测的半监督方法，直接将其与全监督模型进行量化对比存在一定局限性。尽管如此，本节仍提供了 SS-PSD 与近期主流方法的对比结果。
+由于 SCCN（2022）\cite{zheng2022center}、SAM-PS（2024）\cite{zhai2024sam} 以及 WTSA-Net（2026）\cite{li2026parking} 等方法尚未开源，本节对比数据均引自其原始论文在 ps2.0 数据集上的测试结果。对比结果如表 \ref{tab_recent} 所示，其中“SS-PSD(1/n)”表示仅使用 $1/n$ 比例的标签进行训练所得到的模型。
 
 \begin{table}[ht]
 \centering
@@ -504,12 +505,12 @@ Table~\ref{tab_ablation}~Ablation of strategy variants for CGM consistency and A
 
 \begin{table}[!h]
 \centering
-\setlength{\tabcolsep}{4mm}
+\setlength{\tabcolsep}{2.5mm}
 \caption{不同干扰强度下各 VAT 变体的性能对比 \\ Table \ref{tab_eps} Performance comparison of VAT variants under different disturbance intensities}
 \begin{tabular}{ccccccc}
 \toprule
  & \multicolumn{3}{@{}c@{}}{$AP_{marking-point}$} & \multicolumn{3}{@{}c@{}}{$AP_{parking-slot}$} \\\cmidrule{2-4}\cmidrule{5-7}%
-   \multirow{-2}{*}{$eps$}  & S-VAT & T-VAT & Ours & S-VAT & T-VAT & Ours \\
+   \multirow{-2}{*}{$eps$}  & S-VAT & T-VAT & Adaptive-VAT & S-VAT & T-VAT & Adaptive-VAT \\
 \midrule
     10.0 & 80.89\% & 80.78\% & 81.32\% &79.11\% & 78.89\% & 79.15\%  \\
      1.0 & 80.87\% & 81.04\% & 81.68\% &78.65\% &78.89\% & 79.54\%  \\
@@ -522,15 +523,15 @@ Table~\ref{tab_ablation}~Ablation of strategy variants for CGM consistency and A
 \begin{figure}[!b]
 \centering
 \includegraphics[width=1\textwidth]{figures/chp2/pdf/result.pdf}
-\caption{不同复杂场景下的可视化检测结果 \\Figure~\ref{fig_result}~Qualitative visualization results across various challenging scenes}
+\caption{不同场景下的可视化检测结果 \\Figure~\ref{fig_result}~Qualitative visualization results across various scenes}
 \label{fig_result}
 \end{figure}
 
 \begin{table}[!h]
 \centering
 \setlength{\tabcolsep}{6mm}
-\caption{复杂场景子集的细分性能评估与对比\\
-Table~\ref{tab_test}~Robustness evaluation on various scene-specific sub-test sets}
+\caption{不同场景子集的检测性能对比\\
+Table~\ref{tab_test}~Comparison of detection performance across different scenario subsets}
 \begin{tabular}{lcccc}
 \toprule
  \multicolumn{2}{c}{} & \multicolumn{2}{c}{$AP_{parking-slot}$} \\ \cmidrule{3-4}%
@@ -553,7 +554,8 @@ Table~\ref{tab_test}~Robustness evaluation on various scene-specific sub-test se
 
 \subsection{分场景检测结果分析}
 
-表 \ref{tab_test} 对比监督基线方法 DMPR-PS \cite{huang2019dmpr} 与本文所提 SS-PSD 方法在 CRPS-D 各子测试集所对应场景下的性能。该结果基于 CRPS-D 数据集训练得出，其中标注数据与未标注数据的比例为 1/12。实验结果表明，无论是在简单场景（如“室内弱光”、“室外阴影”等），还是复杂场景（如“受损车位”、“室外夜晚”等），SS-PSD 模型均展现出更优的性能，停车位检测的可视化结果如图 \ref{fig_result} 所示。
+为了进一步验证模型在不同环境下的鲁棒性，本节对全监督方法 DMPR-PS \cite{huang2019dmpr} 与 SS-PSD 方法进行了分场景量化对比，检测结果如表 \ref{tab_test} 所示。
+该结果基于 CRPS-D 数据集训练得出，其中标注数据与未标注数据的比例为 1/12。实验结果表明，无论是在简单场景（如“室内弱光”、“室外阴影”等），还是复杂场景（如“受损车位”、“室外夜晚”等），SS-PSD 模型均展现出更优的性能，具体停车位检测可视化结果如图 \ref{fig_result} 所示。
 
 尤为突出的是，SS-PSD 能够通过有效利用易于获取的未标注数据，显著缓解长尾分布所带来的难题。例如，“室外夜晚”子集的数据规模最小（仅 86 张图像），在监督方案下表现最差（平均精度仅为 38.38\%），而本文的 SS-PSD 方法则可大幅提升模型性能，平均精度达到 63.45\%，提升了 25.07 个百分点。
 
@@ -561,7 +563,7 @@ Table~\ref{tab_test}~Robustness evaluation on various scene-specific sub-test se
 
 \section{本章小结}
 
-本章针对复杂真实场景中停车位检测任务面临的数据规模受限以及标注开销显著问题，从数据构建与学习范式两个层面展开研究。首先构建了复杂真实场景停车位数据集 CRPS-D，该数据集覆盖多光照、多场景、多停车形式及多种天气条件，包含丰富的场景变化和复杂实例，为后续方法研究提供了统一的数据基础。然后，本章提出了面向停车位检测任务的半监督检测方法 SS-PSD。该方法基于教师-学生学习范式，通过 CGM 一致性约束和自适应 VAT 扰动模块有效利用未标注数据，显著提升了模型的泛化能力与鲁棒性。
+本章针对复杂真实场景中停车位检测任务面临的数据规模受限以及标注开销显著问题，从数据构建与学习范式两个层面展开研究。首先构建了复杂真实场景停车位数据集 CRPS-D，该数据集覆盖多光照、多场景、多停车形式及多种天气条件，包含丰富的场景变化和复杂实例，为后续方法研究提供了统一的数据基础。然后，本章提出了面向停车位检测任务的半监督检测方法 SS-PSD。该方法基于教师-学生学习范式，通过 CGM 一致性约束和 Adaptive-VAT 扰动模块有效利用未标注数据，显著提升了模型的泛化能力与鲁棒性。
 最终的实验结果表明，SS-PSD 在不同标注比例下均显著优于现有全监督方法，特别是在标注数据极度稀缺的情况下性能提升更为明显。并且，SS-PSD 在不同场景下也展现出良好的适应性，尤其在长尾分布场景（如夜晚）中性能提升明显，缓解了数据不平衡带来的检测误差。
 
 
